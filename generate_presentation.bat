@@ -15,6 +15,6 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo [+] Presentation successfully generated!
-echo [+] File Location: reports\CLOUD-M7_Review1_Presentation.pptx
+echo [+] File Location: reports\CLOUD-M7_Review1_Final_Presentation.pptx
 echo.
 pause
