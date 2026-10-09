@@ -38,11 +38,12 @@ env/
 *.swp
 *.swo
 
+# Temporary Office Lock files
+~$*
+
 # Output logs and artifacts
 *.log
 output/
-reports/*.png
-!reports/.gitkeep
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
