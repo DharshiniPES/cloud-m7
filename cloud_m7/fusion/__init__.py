@@ -6,6 +6,12 @@ from cloud_m7.fusion.iterative_discovery import (
     IterationMetrics,
     IterativeDiscoveryResult,
 )
+from cloud_m7.fusion.interconnected_paths import (
+    InterconnectedAttackPathEngine,
+    SensorAttackPath,
+    ChokePoint,
+    InterconnectedAttackGraphResult,
+)
 
 __all__ = [
     "ProvenanceGraphEngine",
@@ -14,4 +20,8 @@ __all__ = [
     "DiscoveredAttackVector",
     "IterationMetrics",
     "IterativeDiscoveryResult",
+    "InterconnectedAttackPathEngine",
+    "SensorAttackPath",
+    "ChokePoint",
+    "InterconnectedAttackGraphResult",
 ]

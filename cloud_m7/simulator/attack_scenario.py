@@ -538,6 +538,71 @@ class MultiTierAttackSimulator:
         if primary_cloud_sock:
             primary_cloud_sock.add_parent(v2_fog_persist.uuid)
 
+        # ==============================================================
+        # Vector 3: Industrial Actuator (edge-actuator-03) Modbus Exploit
+        # ==============================================================
+        t += 0.5
+        v3_edge_exploit = ProvenanceEvent(
+            uuid="atk3-edge-01-plc-exploit",
+            timestamp=t,
+            tier=TierType.EDGE,
+            host_id="edge-actuator-03",
+            event_type=EventType.PROCESS,
+            payload={
+                "action": "exec",
+                "entity": "/usr/bin/modbus_controller",
+                "pid": 504,
+                "is_attack": True,
+                "description": "Unauthorized industrial actuator Modbus control injection",
+            },
+        )
+        secondary_events.append(v3_edge_exploit)
+
+        t += 0.2
+        v3_edge_sock_out = ProvenanceEvent(
+            uuid="atk3-edge-02-socket-out",
+            timestamp=t,
+            tier=TierType.EDGE,
+            host_id="edge-actuator-03",
+            event_type=EventType.SOCKET,
+            payload={
+                "action": "connect",
+                "src_ip": "192.168.1.52",
+                "src_port": 50200,
+                "dst_ip": "10.0.1.1",
+                "dst_port": 1883,
+                "protocol": "TCP",
+                "is_attack": True,
+                "description": "Outbound rogue telemetry flow from actuator to Fog gateway",
+            },
+            parents=[v3_edge_exploit.uuid],
+        )
+        secondary_events.append(v3_edge_sock_out)
+
+        t += 0.015
+        v3_fog_sock_in = ProvenanceEvent(
+            uuid="atk3-fog-01-socket-in",
+            timestamp=t,
+            tier=TierType.FOG,
+            host_id="fog-gateway-01",
+            event_type=EventType.SOCKET,
+            payload={
+                "action": "accept",
+                "src_ip": "192.168.1.52",
+                "src_port": 50200,
+                "dst_ip": "10.0.1.1",
+                "dst_port": 1883,
+                "protocol": "TCP",
+                "is_attack": True,
+                "description": "Fog gateway ingress accepts connection from corrupted actuator",
+            },
+        )
+        secondary_events.append(v3_fog_sock_in)
+
+        # Link to fog execution
+        if primary_fog_exec:
+            primary_fog_exec.add_parent(v3_fog_sock_in.uuid)
+
         return secondary_events
 
     def generate_full_simulation_dataset(

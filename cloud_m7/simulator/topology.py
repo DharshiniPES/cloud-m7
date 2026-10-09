@@ -60,6 +60,14 @@ class MultiTierTopology:
             memory_capacity_mb=512.0,
             open_ports=[1883],
         )
+        self.nodes["edge-actuator-03"] = SimulatedNode(
+            host_id="edge-actuator-03",
+            tier=TierType.EDGE,
+            ip_address="192.168.1.52",
+            cpu_capacity_mcore=800.0,
+            memory_capacity_mb=256.0,
+            open_ports=[502, 1883],
+        )
 
         # 2. Fog Tier (Local cluster gateway / micro-datacenter)
         self.nodes["fog-gateway-01"] = SimulatedNode(

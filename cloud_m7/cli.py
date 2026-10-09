@@ -13,6 +13,7 @@ import time
 from cloud_m7.fusion.attack_path import AttackPathReconstructor
 from cloud_m7.fusion.causal_graph import ProvenanceGraphEngine
 from cloud_m7.fusion.iterative_discovery import IterativeAttackDiscoveryEngine
+from cloud_m7.fusion.interconnected_paths import InterconnectedAttackPathEngine
 from cloud_m7.placement.cost_model import (
     ForensicTask,
     MultiObjectiveWeights,
@@ -160,16 +161,43 @@ def run_full_pipeline_demo():
         print(f"        Path Length: {v.path_length} hops -> Root impact: {v.vector_impact_score:.2f}")
         print(f"        Summary:     {v.description}")
 
-    # 5. Generate Publication-Quality Visualization
-    print("\n[Stage 5] Generating Multi-Tier Forensic Graph Visualization...")
+    # 5. Interconnected Multi-Sensor Attack Graph & Choke-Point Analysis
+    print("\n[Stage 5] Constructing Interconnected Multi-Sensor Attack Graph to Cloud...")
+    intercon_engine = InterconnectedAttackPathEngine(engine)
+    intercon_res = intercon_engine.analyze_interconnected_attack_graph()
+
+    print("=" * 70)
+    print("  INTERCONNECTED MULTI-SENSOR ATTACK GRAPH & CHOKE-POINT ANALYSIS")
+    print("=" * 70)
+    print(f"  Originating Edge Devices: {', '.join(intercon_res.originating_sensors)}")
+    print(f"  Total Interconnected Graph Nodes: {intercon_res.total_interconnected_nodes}")
+    print(f"  Total Interconnected Graph Edges: {intercon_res.total_interconnected_edges}")
+    print("\n  Paths from Individual Edge Sensors to Cloud Target:")
+    for sensor, paths in intercon_res.sensor_paths.items():
+        for p in paths:
+            print(f"    * [{sensor}] -> {' -> '.join(p.traversed_hosts)} ({p.hops} hops)")
+
+    print("\n  Critical Convergence Choke Points (Containment Bottlenecks):")
+    for cp in intercon_res.choke_points:
+        print(f"    * [{cp.tier.upper()}] Host: '{cp.host_id}' | Action: {cp.action} on {cp.entity}")
+        print(f"        Containment Efficiency: {cp.containment_efficiency_pct}% (Severs {cp.paths_severed_count}/{cp.total_paths_count} paths)")
+        print(f"        Is Articulation Cut-Point: {cp.is_cut_vertex}")
+        print(f"        Recommendation: {cp.mitigation_recommendation}")
+
+    # 6. Generate Publication-Quality Visualizations
+    print("\n[Stage 6] Generating Multi-Tier Forensic Graph Visualizations...")
     os.makedirs("reports", exist_ok=True)
     report_img_path = os.path.join("reports", "attack_path_reconstruction.png")
+    intercon_img_path = os.path.join("reports", "interconnected_attack_paths.png")
+    
     viz = Visualizer(engine)
     viz.render_attack_graph(report_img_path, iterative_result=iter_result)
-    print(f"    -> High-resolution attack graph saved to: {report_img_path}")
+    viz.render_interconnected_graph(intercon_img_path, interconnected_result=intercon_res)
+    print(f"    -> Attack graph saved to: {report_img_path}")
+    print(f"    -> Interconnected multi-sensor graph saved to: {intercon_img_path}")
 
-    # 6. Run Placement Optimization
-    print("\n[Stage 6] Solving Tier-Adaptive Placement Optimization Model...")
+    # 7. Run Placement Optimization
+    print("\n[Stage 7] Solving Tier-Adaptive Placement Optimization Model...")
     run_placement_optimization()
 
     print("=" * 70)

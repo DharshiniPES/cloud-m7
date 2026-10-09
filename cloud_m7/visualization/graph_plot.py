@@ -5,7 +5,7 @@ Renders multi-tier DAGs across Edge, Fog, and Cloud layers with
 highlighted attack path causal flows.
 """
 
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 import matplotlib
 matplotlib.use("Agg")  # Headless backend for reliable server/script rendering
 import matplotlib.pyplot as plt
@@ -172,6 +172,151 @@ class Visualizer:
             pos,
             labels=labels,
             font_size=8,
+            font_family="sans-serif",
+            font_weight="bold",
+        )
+
+        plt.title(
+            title,
+            fontsize=15,
+            fontweight="bold",
+            pad=18,
+            color="#212121",
+        )
+        plt.xlim(0.0, 10.0)
+        plt.ylim(0.0, 10.0)
+        plt.axis("off")
+        plt.legend(loc="upper left", framealpha=0.9, fontsize=10)
+        plt.tight_layout()
+
+        plt.savefig(output_filepath, bbox_inches="tight")
+        plt.close()
+
+        return output_filepath
+
+    def render_interconnected_graph(
+        self,
+        output_filepath: str,
+        interconnected_result: Any,
+        title: str = "CLOUD-M7: Interconnected Multi-Sensor Attack Paths & Choke-Point Analysis",
+    ) -> str:
+        """
+        Renders the convergent multi-sensor attack graph, highlighting distinct
+        originating edge devices and the critical Fog convergence choke points.
+        """
+        subgraph = interconnected_result.induced_attack_subgraph
+        if subgraph.number_of_nodes() == 0:
+            return output_filepath
+
+        plt.figure(figsize=(18, 10), dpi=300)
+
+        # 1. Custom layout grouping edge sensors vertically
+        pos: Dict[str, Tuple[float, float]] = {}
+        sensor_nodes: Dict[str, List[str]] = {}
+        fog_nodes: List[str] = []
+        cloud_nodes: List[str] = []
+
+        choke_node_ids = {cp.node_id for cp in interconnected_result.choke_points if cp.containment_efficiency_pct >= 80.0}
+
+        for n, data in subgraph.nodes(data=True):
+            tier = data.get("tier", "Edge")
+            host = data.get("host_id", "")
+            if tier == "Edge":
+                sensor_nodes.setdefault(host, []).append(n)
+            elif tier == "Fog":
+                fog_nodes.append(n)
+            else:
+                cloud_nodes.append(n)
+
+        # Layout Edge devices in distinct vertical bands
+        sensor_list = sorted(list(sensor_nodes.keys()))
+        num_sensors = max(1, len(sensor_list))
+        for s_idx, s_host in enumerate(sensor_list):
+            nodes = sorted(sensor_nodes[s_host], key=lambda x: subgraph.nodes[x].get("timestamp", 0))
+            band_y_min = 1.0 + (8.0 * s_idx / num_sensors)
+            band_y_max = 1.0 + (8.0 * (s_idx + 1) / num_sensors) - 0.5
+            count = len(nodes)
+            for i, n in enumerate(nodes):
+                y = band_y_min + ((band_y_max - band_y_min) * (i + 1) / (count + 1)) if count > 0 else (band_y_min + band_y_max) / 2
+                x = 1.5 + (0.4 * (i % 2))
+                pos[n] = (x, y)
+
+        # Layout Fog nodes in center
+        fog_nodes = sorted(fog_nodes, key=lambda x: subgraph.nodes[x].get("timestamp", 0))
+        fog_count = len(fog_nodes)
+        for i, n in enumerate(fog_nodes):
+            y = 1.5 + (7.0 * (i + 1) / (fog_count + 1)) if fog_count > 0 else 5.0
+            pos[n] = (5.0, y)
+
+        # Layout Cloud nodes on right
+        cloud_nodes = sorted(cloud_nodes, key=lambda x: subgraph.nodes[x].get("timestamp", 0))
+        cloud_count = len(cloud_nodes)
+        for i, n in enumerate(cloud_nodes):
+            y = 2.0 + (6.0 * (i + 1) / (cloud_count + 1)) if cloud_count > 0 else 5.0
+            pos[n] = (8.5, y)
+
+        # 2. Draw Tier Background Zones
+        plt.axvspan(0.5, 3.2, color="#E8F5E9", alpha=0.5, label="Edge Devices / Sensor Grid")
+        plt.axvspan(3.3, 6.7, color="#FFF3E0", alpha=0.5, label="Fog Gateways (Convergence Layer)")
+        plt.axvspan(6.8, 9.5, color="#EDE7F6", alpha=0.5, label="Centralized Cloud Datastore")
+
+        # 3. Draw Nodes with distinct colors for Choke Points vs regular attack nodes
+        regular_nodes = [n for n in subgraph.nodes() if n not in choke_node_ids]
+        choke_nodes = [n for n in subgraph.nodes() if n in choke_node_ids]
+
+        # Draw regular attack nodes
+        nx.draw_networkx_nodes(
+            subgraph,
+            pos,
+            nodelist=regular_nodes,
+            node_color="#E53935",
+            node_size=650,
+            alpha=0.9,
+            edgecolors="#B71C1C",
+            linewidths=2.0,
+        )
+
+        # Draw Choke-point articulation nodes with bright highlight
+        if choke_nodes:
+            nx.draw_networkx_nodes(
+                subgraph,
+                pos,
+                nodelist=choke_nodes,
+                node_color="#FFD600",
+                node_size=1000,
+                alpha=0.98,
+                edgecolors="#E65100",
+                linewidths=3.5,
+            )
+
+        # Draw directed causal edges
+        nx.draw_networkx_edges(
+            subgraph,
+            pos,
+            edgelist=list(subgraph.edges()),
+            edge_color="#D50000",
+            arrows=True,
+            arrowsize=22,
+            arrowstyle="-|>",
+            width=2.8,
+            connectionstyle="arc3,rad=0.06",
+        )
+
+        # Labels
+        labels = {}
+        for n, data in subgraph.nodes(data=True):
+            action = data.get("action", "")
+            host = data.get("host_id", "")
+            if n in choke_node_ids:
+                labels[n] = f"CHOKE-POINT\n{action}\n({host})"
+            else:
+                labels[n] = f"{host}\n{action}"
+
+        nx.draw_networkx_labels(
+            subgraph,
+            pos,
+            labels=labels,
+            font_size=7.5,
             font_family="sans-serif",
             font_weight="bold",
         )
