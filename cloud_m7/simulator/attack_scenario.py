@@ -413,20 +413,158 @@ class MultiTierAttackSimulator:
 
         return attack_events
 
-    def generate_full_simulation_dataset(
-        self, base_time: Optional[float] = None, benign_count: int = 40
+    def generate_secondary_attack_vector(
+        self, base_time: float, primary_events: List[ProvenanceEvent]
     ) -> List[ProvenanceEvent]:
         """
-        Combines background benign workloads with the multi-stage cyberattack
-        sorted in chronological order.
+        Synthesizes a secondary, concurrent attack vector:
+            Secondary Edge Device (edge-sensor-02) Firmware Exploit ->
+            Secondary Fog Gateway Persistence Backdoor
+        Demonstrates multi-root attack discovery across iterations.
+        """
+        secondary_events: List[ProvenanceEvent] = []
+        t = base_time + 6.0  # Concurrent timeline
+
+        # Step 2.1: Vulnerable firmware updater on edge-sensor-02
+        v2_edge_exploit = ProvenanceEvent(
+            uuid="atk2-edge-01-fw-exploit",
+            timestamp=t,
+            tier=TierType.EDGE,
+            host_id="edge-sensor-02",
+            event_type=EventType.PROCESS,
+            payload={
+                "action": "exec",
+                "entity": "/usr/sbin/fw_updater",
+                "pid": 890,
+                "is_attack": True,
+                "description": "Secondary IoT sensor firmware command-injection exploit",
+            },
+        )
+        secondary_events.append(v2_edge_exploit)
+
+        # Step 2.2: Exploit spawns reverse shell
+        t += 0.3
+        v2_edge_shell = ProvenanceEvent(
+            uuid="atk2-edge-02-shell",
+            timestamp=t,
+            tier=TierType.EDGE,
+            host_id="edge-sensor-02",
+            event_type=EventType.PROCESS,
+            payload={
+                "action": "fork",
+                "entity": "/bin/sh",
+                "pid": 912,
+                "is_attack": True,
+                "description": "Stealth shell spawned on secondary edge sensor",
+            },
+            parents=[v2_edge_exploit.uuid],
+        )
+        secondary_events.append(v2_edge_shell)
+
+        # Step 2.3: Outbound socket from edge-sensor-02 to Fog Gateway (port 9090)
+        t += 0.4
+        v2_edge_sock_out = ProvenanceEvent(
+            uuid="atk2-edge-03-socket-out",
+            timestamp=t,
+            tier=TierType.EDGE,
+            host_id="edge-sensor-02",
+            event_type=EventType.SOCKET,
+            payload={
+                "action": "connect",
+                "src_ip": "192.168.1.51",
+                "src_port": 49100,
+                "dst_ip": "10.0.1.1",
+                "dst_port": 9090,
+                "protocol": "TCP",
+                "is_attack": True,
+                "description": "Secondary lateral movement socket to Fog gateway port 9090",
+            },
+            parents=[v2_edge_shell.uuid],
+        )
+        secondary_events.append(v2_edge_sock_out)
+
+        # Step 2.4: Fog Gateway accepts incoming socket (Cross-tier link E_network)
+        t += 0.02
+        v2_fog_sock_in = ProvenanceEvent(
+            uuid="atk2-fog-01-socket-in",
+            timestamp=t,
+            tier=TierType.FOG,
+            host_id="fog-gateway-01",
+            event_type=EventType.SOCKET,
+            payload={
+                "action": "accept",
+                "src_ip": "192.168.1.51",
+                "src_port": 49100,
+                "dst_ip": "10.0.1.1",
+                "dst_port": 9090,
+                "protocol": "TCP",
+                "is_attack": True,
+                "description": "Fog gateway accepts secondary covert connection",
+            },
+        )
+        secondary_events.append(v2_fog_sock_in)
+
+        # Step 2.5: Fog gateway backdoor links to the Fog unauthorized python process
+        # (Connects this secondary vector to the primary pivot chain)
+        t += 0.3
+        # Find primary fog execution event to establish causal link
+        primary_fog_exec = next(
+            (e for e in primary_events if e.uuid == "atk-fog-02-exec"), None
+        )
+        parent_ids = [v2_fog_sock_in.uuid]
+        if primary_fog_exec:
+            parent_ids.append(primary_fog_exec.uuid)
+
+        v2_fog_persist = ProvenanceEvent(
+            uuid="atk2-fog-02-persist",
+            timestamp=t,
+            tier=TierType.FOG,
+            host_id="fog-gateway-01",
+            event_type=EventType.FILE,
+            payload={
+                "action": "write",
+                "entity": "/etc/cron.d/stealth_persist",
+                "is_attack": True,
+                "description": "Secondary persistence task established on Fog gateway",
+            },
+            parents=parent_ids,
+        )
+        secondary_events.append(v2_fog_persist)
+
+        # Also link persistence to downstream cloud socket if available
+        primary_cloud_sock = next(
+            (e for e in primary_events if e.uuid == "atk-fog-04-socket-out"), None
+        )
+        if primary_cloud_sock:
+            primary_cloud_sock.add_parent(v2_fog_persist.uuid)
+
+        return secondary_events
+
+    def generate_full_simulation_dataset(
+        self,
+        base_time: Optional[float] = None,
+        benign_count: int = 40,
+        include_multi_vector: bool = True,
+    ) -> List[ProvenanceEvent]:
+        """
+        Combines background benign workloads with the multi-stage cyberattack,
+        optionally adding a secondary concurrent attack vector for iterative discovery.
         """
         if base_time is None:
             base_time = time.time()
 
         benign = self.generate_benign_events(base_time=base_time, num_events=benign_count)
-        attack = self.generate_attack_scenario(base_time=base_time)
+        attack_primary = self.generate_attack_scenario(base_time=base_time)
 
-        all_events = benign + attack
+        all_events = benign + attack_primary
+
+        if include_multi_vector:
+            attack_secondary = self.generate_secondary_attack_vector(
+                base_time=base_time, primary_events=attack_primary
+            )
+            all_events.extend(attack_secondary)
+
         # Sort chronologically by timestamp
         all_events.sort(key=lambda e: e.timestamp)
         return all_events
+

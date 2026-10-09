@@ -12,6 +12,7 @@ import time
 
 from cloud_m7.fusion.attack_path import AttackPathReconstructor
 from cloud_m7.fusion.causal_graph import ProvenanceGraphEngine
+from cloud_m7.fusion.iterative_discovery import IterativeAttackDiscoveryEngine
 from cloud_m7.placement.cost_model import (
     ForensicTask,
     MultiObjectiveWeights,
@@ -128,31 +129,96 @@ def run_full_pipeline_demo():
         print(f"          Description: {step.description}")
         print("  " + "-" * 66)
 
-    # 4. Generate Publication-Quality Visualization
-    print("\n[Stage 4] Generating Multi-Tier Forensic Graph Visualization...")
+    # 4. Novelty Feature: Iterative Multi-Root Causal Discovery
+    print("\n[Stage 4] Executing Novel Iterative Multi-Root Causal Attack Discovery...")
+    iter_engine = IterativeAttackDiscoveryEngine(
+        engine,
+        max_iterations=5,
+        impact_threshold_epsilon=5.0,  # 5% marginal threshold
+        causal_attenuation=0.85,
+    )
+    iter_result = iter_engine.discover_all_attack_points()
+
+    print("=" * 70)
+    print("  CLOUD-M7 NOVELTY: ITERATIVE CAUSAL DISCOVERY & IMPACT COMPARISON")
+    print(f"  Hyperparameters: K_max={iter_result.max_iterations_hyperparameter}, "
+          f"Epsilon={iter_result.impact_threshold_epsilon}%, Lambda=0.85")
+    print("=" * 70)
+    for m in iter_result.iteration_history:
+        status_tag = "[CONVERGED]" if m.converged else "[EXPLORING]"
+        print(f"  Iteration {m.iteration:02d} {status_tag}:")
+        print(f"      New Attack Nodes:      +{m.new_nodes_discovered} (Total: {m.total_discovered_nodes})")
+        print(f"      Cumulative Impact:     {m.cumulative_impact_score:.2f}")
+        print(f"      Marginal Impact Gain:  +{m.marginal_impact_gain_pct:.2f}%")
+        print(f"      Convergence Status:    {m.reason}")
+        print("  " + "-" * 66)
+
+    print("\n  Summary of Discovered Attack Entry Vectors:")
+    for v in iter_result.discovered_vectors:
+        print(f"    * {v.vector_id}:")
+        print(f"        Entry Point: [{v.entry_tier}] on host '{v.entry_host}' ({v.entry_entity})")
+        print(f"        Path Length: {v.path_length} hops -> Root impact: {v.vector_impact_score:.2f}")
+        print(f"        Summary:     {v.description}")
+
+    # 5. Generate Publication-Quality Visualization
+    print("\n[Stage 5] Generating Multi-Tier Forensic Graph Visualization...")
     os.makedirs("reports", exist_ok=True)
     report_img_path = os.path.join("reports", "attack_path_reconstruction.png")
     viz = Visualizer(engine)
-    viz.render_attack_graph(report_img_path, attack_result=result)
+    viz.render_attack_graph(report_img_path, iterative_result=iter_result)
     print(f"    -> High-resolution attack graph saved to: {report_img_path}")
 
-    # 5. Run Placement Optimization
-    print("\n[Stage 5] Solving Tier-Adaptive Placement Optimization Model...")
+    # 6. Run Placement Optimization
+    print("\n[Stage 6] Solving Tier-Adaptive Placement Optimization Model...")
     run_placement_optimization()
 
     print("=" * 70)
-    print("  REVIEW 1 DEMONSTRATION COMPLETE: ALL MODULES VERIFIED")
+    print("  REVIEW 1 DEMONSTRATION COMPLETE: ALL MODULES & NOVELTY VERIFIED")
     print("=" * 70)
+
+
+def run_iterative_demo_standalone():
+    """Standalone runner for the iterative multi-root discovery engine."""
+    print("=" * 70)
+    print("  CLOUD-M7 NOVELTY: ITERATIVE MULTI-ROOT FORENSIC DISCOVERY")
+    print("=" * 70)
+    sim = MultiTierAttackSimulator()
+    events = sim.generate_full_simulation_dataset(benign_count=20, include_multi_vector=True)
+    engine = ProvenanceGraphEngine(time_window_seconds=15.0)
+    engine.add_events(events)
+    engine.fuse_global_graph()
+
+    iter_engine = IterativeAttackDiscoveryEngine(engine, max_iterations=5, impact_threshold_epsilon=5.0)
+    res = iter_engine.discover_all_attack_points()
+
+    print(f"\n[+] Total Iterations: {res.total_iterations_run}")
+    print(f"[+] Total Discovered Attack Vectors: {len(res.discovered_vectors)}")
+    for m in res.iteration_history:
+        print(f"    - Iteration {m.iteration}: Impact={m.cumulative_impact_score:.2f}, Gain=+{m.marginal_impact_gain_pct:.2f}% ({m.reason})")
+    for v in res.discovered_vectors:
+        print(f"    * Vector: {v.vector_id} -> Entry on [{v.entry_tier}] '{v.entry_host}' ({v.entry_entity})")
 
 
 def main():
     parser = argparse.ArgumentParser(description="CLOUD-M7 Forensic Provenance Framework")
     parser.add_argument(
         "mode",
-        choices=["demo", "optimize", "simulate"],
+        choices=["demo", "optimize", "simulate", "iterative"],
         default="demo",
         nargs="?",
         help="Execution mode (default: demo)",
+    )
+    parser.add_argument(
+        "--max-iterations",
+        type=int,
+        default=5,
+        help="Hyperparameter K_max for iterative discovery",
+    )
+    parser.add_argument(
+        "--epsilon",
+        type=float,
+        default=5.0,
+        help="Convergence threshold epsilon on marginal impact gain (%)",
     )
     args = parser.parse_args()
 
@@ -164,6 +230,8 @@ def main():
         sim = MultiTierAttackSimulator()
         evts = sim.generate_full_simulation_dataset()
         print(f"Generated {len(evts)} events successfully.")
+    elif args.mode == "iterative":
+        run_iterative_demo_standalone()
 
 
 if __name__ == "__main__":

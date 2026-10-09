@@ -13,6 +13,7 @@ import networkx as nx
 
 from cloud_m7.fusion.attack_path import AttackPathResult
 from cloud_m7.fusion.causal_graph import ProvenanceGraphEngine
+from cloud_m7.fusion.iterative_discovery import IterativeDiscoveryResult
 
 
 class Visualizer:
@@ -28,6 +29,7 @@ class Visualizer:
         self,
         output_filepath: str,
         attack_result: Optional[AttackPathResult] = None,
+        iterative_result: Optional[IterativeDiscoveryResult] = None,
         title: str = "CLOUD-M7: Cross-Tier Causal Attack-Path Reconstruction",
     ) -> str:
         """
@@ -55,7 +57,9 @@ class Visualizer:
 
         # Identify attack node set early for positioning
         attack_node_set_for_pos: Set[str] = set()
-        if attack_result:
+        if iterative_result:
+            attack_node_set_for_pos = set(iterative_result.all_attack_nodes)
+        elif attack_result:
             attack_node_set_for_pos = {s.uuid for s in attack_result.attack_steps}
 
         for tier, nodes in tier_nodes.items():
@@ -80,7 +84,10 @@ class Visualizer:
         attack_node_set: Set[str] = set()
         attack_edge_set: Set[Tuple[str, str]] = set()
 
-        if attack_result:
+        if iterative_result:
+            attack_node_set = set(iterative_result.all_attack_nodes)
+            attack_edge_set = set(iterative_result.all_attack_edges)
+        elif attack_result:
             path_uuids = [step.uuid for step in attack_result.attack_steps]
             attack_node_set = set(path_uuids)
             for i in range(len(path_uuids) - 1):
@@ -153,6 +160,9 @@ class Visualizer:
                     if s.uuid == n:
                         labels[n] = f"Step {s.order}\n{s.action}"
                         break
+            elif n in attack_node_set and iterative_result:
+                action = data.get("action", "")
+                labels[n] = f"Atk: {action}"
             else:
                 action = data.get("action", "")
                 labels[n] = action if len(action) <= 10 else action[:8] + ".."
