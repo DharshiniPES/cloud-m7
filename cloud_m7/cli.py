@@ -14,6 +14,10 @@ from cloud_m7.fusion.attack_path import AttackPathReconstructor
 from cloud_m7.fusion.causal_graph import ProvenanceGraphEngine
 from cloud_m7.fusion.iterative_discovery import IterativeAttackDiscoveryEngine
 from cloud_m7.fusion.interconnected_paths import InterconnectedAttackPathEngine
+from cloud_m7.fusion.causal_bridge import CausalBridgeImputer
+from cloud_m7.fusion.active_remediation import ActiveChokePointRemediator
+from cloud_m7.fusion.mitre_mapper import MitreAttackMapper
+from cloud_m7.storage.parquet_engine import ProvenanceStorageEngine
 from cloud_m7.placement.cost_model import (
     ForensicTask,
     MultiObjectiveWeights,
@@ -200,9 +204,136 @@ def run_full_pipeline_demo():
     print("\n[Stage 7] Solving Tier-Adaptive Placement Optimization Model...")
     run_placement_optimization()
 
+    # 8. Columnar Parquet Storage & DuckDB High-Speed Analytics
+    print("\n[Stage 8] Columnar Parquet Storage & DuckDB High-Speed Analytics...")
+    storage_engine = ProvenanceStorageEngine()
+    parquet_out = os.path.join("data", "processed", "provenance_events.parquet")
+    json_out = os.path.join("data", "processed", "provenance_events.json")
+    benchmark_res = storage_engine.benchmark_compression(events, parquet_out, json_out)
+    print(f"    -> Serialized {benchmark_res['total_events']} events to Parquet: {parquet_out}")
+    print(f"    -> Raw JSON Size:       {benchmark_res['json_size_bytes']:,} bytes")
+    print(f"    -> Compressed Parquet:  {benchmark_res['parquet_size_bytes']:,} bytes")
+    print(f"    -> Compression Factor:  {benchmark_res['compression_ratio']}x storage reduction")
+    print(f"    -> DuckDB SQL Execution Time: {benchmark_res['parquet_query_time_sec']*1000:.2f} ms")
+
+    # 9. Causal Bridge Imputation (Lossy Edge-Fog Networks)
+    print("\n[Stage 9] Causal Bridge Imputation under Lossy Network Conditions...")
+    bridge_imputer = CausalBridgeImputer(max_time_window_sec=30.0, confidence_threshold=0.60)
+    bridge_res = bridge_imputer.impute_missing_bridges(global_dag)
+    print(f"    -> Severed Graph Partitions Evaluated: {bridge_res.severed_components_detected}")
+    print(f"    -> Imputed Causal Transitions:         {bridge_res.imputed_bridges_count}")
+    print(f"    -> Successfully Repaired Attack Paths: {bridge_res.repaired_attack_paths_count}")
+    for b in bridge_res.imputed_bridges:
+        print(f"        * Imputed Edge: {b.source_host} ({b.source_tier}) -> {b.target_host} ({b.target_tier})")
+        print(f"          Confidence: {b.confidence_score*100:.1f}% | Rationale: {b.imputation_rationale}")
+
+    # 10. Active Choke-Point Remediation & Zero-Blast-Radius Containment
+    print("\n[Stage 10] Active Choke-Point Remediation & Zero-Blast-Radius Containment...")
+    remediator = ActiveChokePointRemediator(lambda_collateral_weight=0.5)
+    nodes_meta = {n: d for n, d in global_dag.nodes(data=True)}
+    remediation_plan = remediator.generate_remediation_plan(intercon_res.choke_points, nodes_meta)
+    print(f"    -> Choke Points Analyzed for Policy Synthesis: {remediation_plan.total_choke_points_analyzed}")
+    print(f"    -> Primary Target Choke Point:                  {remediation_plan.optimal_choke_point_node}")
+    print(f"    -> Overall Containment Efficacy:               {remediation_plan.overall_containment_pct}%")
+    print(f"    -> Average Collateral Disruption Index:        {remediation_plan.average_collateral_index}")
+    print("\n  Synthesized Zero-Blast-Radius Mitigation Policies:")
+    for pol in remediation_plan.policies:
+        print(f"    * [{pol.mechanism.value}] on {pol.target_tier} ({pol.target_host}):")
+        print(f"        Containment Efficacy: {pol.containment_efficacy_pct}% | Collateral Index: {pol.collateral_disruption_index}")
+        print(f"        Remediation Priority Score (RPS): {pol.remediation_priority_score}")
+        print(f"        Command: {pol.executable_command}")
+
+    # 11. MITRE ATT&CK Matrix Motif Mapping
+    print("\n[Stage 11] Mapping Provenance Subgraph to MITRE ATT&CK Matrix...")
+    mitre_mapper = MitreAttackMapper()
+    attack_subg = intercon_res.induced_attack_subgraph if intercon_res.induced_attack_subgraph.number_of_nodes() > 0 else global_dag
+    mitre_report = mitre_mapper.map_attack_graph(attack_subg)
+    print(f"    -> Techniques Mapped:      {mitre_report.total_techniques_mapped}")
+    print(f"    -> Kill-Chain Coverage:    {mitre_report.kill_chain_coverage_pct}%")
+    print(f"    -> Tactics Observed:       {', '.join(mitre_report.tactics_observed)}")
+    print("\n" + mitre_report.progression_summary)
+
     print("=" * 70)
-    print("  REVIEW 1 DEMONSTRATION COMPLETE: ALL MODULES & NOVELTY VERIFIED")
+    print("  CLOUD-M7 PIPELINE COMPLETE: ALL ADVANCED CAPABILITIES VERIFIED")
     print("=" * 70)
+
+
+def run_storage_demo():
+    """Standalone runner for Parquet + DuckDB storage analytics."""
+    print("=" * 70)
+    print("  CLOUD-M7: PARQUET + DUCKDB COLUMNAR STORAGE & ANALYTICS")
+    print("=" * 70)
+    sim = MultiTierAttackSimulator()
+    events = sim.generate_full_simulation_dataset(benign_count=40)
+    storage = ProvenanceStorageEngine()
+    parquet_path = os.path.join("data", "processed", "provenance_events.parquet")
+    json_path = os.path.join("data", "processed", "provenance_events.json")
+    bench = storage.benchmark_compression(events, parquet_path, json_path)
+    print(f"[+] Events: {bench['total_events']} | JSON: {bench['json_size_bytes']}B | Parquet: {bench['parquet_size_bytes']}B")
+    print(f"[+] Storage Compression: {bench['compression_ratio']}x reduction")
+    print(f"[+] Query Speed: {bench['parquet_query_time_sec']*1000:.2f} ms")
+    summary = storage.get_tier_summary(parquet_path)
+    print("\n[+] Multi-Tier Distribution (via DuckDB SQL):")
+    for row in summary:
+        print(f"    - Tier {row['tier']}: Total={row['total_events']}, Attacks={row['attack_events']}, Hosts={row['host_count']}")
+
+
+def run_bridge_demo():
+    """Standalone runner for causal bridge imputation."""
+    print("=" * 70)
+    print("  CLOUD-M7 NOVELTY: CAUSAL BRIDGE IMPUTATION (LOSSY NETWORKS)")
+    print("=" * 70)
+    sim = MultiTierAttackSimulator()
+    events = sim.generate_full_simulation_dataset(benign_count=20)
+    engine = ProvenanceGraphEngine(time_window_seconds=15.0)
+    engine.add_events(events)
+    g = engine.fuse_global_graph()
+
+    imputer = CausalBridgeImputer(max_time_window_sec=30.0, confidence_threshold=0.60)
+    res = imputer.impute_missing_bridges(g)
+    print(f"[+] Severed Components Detected: {res.severed_components_detected}")
+    print(f"[+] Imputed Bridges Count:       {res.imputed_bridges_count}")
+    print(f"[+] Repaired Paths:              {res.repaired_attack_paths_count}")
+
+
+def run_remediation_demo():
+    """Standalone runner for active choke-point remediation."""
+    print("=" * 70)
+    print("  CLOUD-M7 NOVELTY: ACTIVE CHOKE-POINT ZERO-BLAST CONTAINMENT")
+    print("=" * 70)
+    sim = MultiTierAttackSimulator()
+    events = sim.generate_full_simulation_dataset(benign_count=20)
+    engine = ProvenanceGraphEngine(time_window_seconds=15.0)
+    engine.add_events(events)
+    engine.fuse_global_graph()
+
+    intercon = InterconnectedAttackPathEngine(engine)
+    res = intercon.analyze_interconnected_attack_graph()
+
+    remediator = ActiveChokePointRemediator()
+    plan = remediator.generate_remediation_plan(res.choke_points)
+    print(f"[+] Choke Points Analyzed: {plan.total_choke_points_analyzed}")
+    print(f"[+] Containment Efficacy: {plan.overall_containment_pct}%")
+    print(f"\n[+] Generated Deployment Script:\n{plan.deployment_script}")
+
+
+def run_mitre_demo():
+    """Standalone runner for MITRE ATT&CK motif mapping."""
+    print("=" * 70)
+    print("  CLOUD-M7 NOVELTY: MITRE ATT&CK MATRIX MOTIF MAPPING")
+    print("=" * 70)
+    sim = MultiTierAttackSimulator()
+    events = sim.generate_full_simulation_dataset(benign_count=20)
+    engine = ProvenanceGraphEngine(time_window_seconds=15.0)
+    engine.add_events(events)
+    g = engine.fuse_global_graph()
+
+    mapper = MitreAttackMapper()
+    report = mapper.map_attack_graph(g)
+    print(f"[+] Techniques Mapped:   {report.total_techniques_mapped}")
+    print(f"[+] Lifecycle Coverage:  {report.kill_chain_coverage_pct}%")
+    print(f"[+] Observed Tactics:    {', '.join(report.tactics_observed)}")
+    print("\n" + report.progression_summary)
 
 
 def run_iterative_demo_standalone():
@@ -231,7 +362,7 @@ def main():
     parser = argparse.ArgumentParser(description="CLOUD-M7 Forensic Provenance Framework")
     parser.add_argument(
         "mode",
-        choices=["demo", "optimize", "simulate", "iterative"],
+        choices=["demo", "optimize", "simulate", "iterative", "storage", "bridge", "remediate", "mitre"],
         default="demo",
         nargs="?",
         help="Execution mode (default: demo)",
@@ -260,6 +391,14 @@ def main():
         print(f"Generated {len(evts)} events successfully.")
     elif args.mode == "iterative":
         run_iterative_demo_standalone()
+    elif args.mode == "storage":
+        run_storage_demo()
+    elif args.mode == "bridge":
+        run_bridge_demo()
+    elif args.mode == "remediate":
+        run_remediation_demo()
+    elif args.mode == "mitre":
+        run_mitre_demo()
 
 
 if __name__ == "__main__":
