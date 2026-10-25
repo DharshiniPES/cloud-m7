@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  edge-sensor-pi:
+    image: python:3.11-slim
+    container_name: cloud_m7_edge_pi
+    networks:
+      edge_fog_net:
+        ipv4_address: 192.168.10.101
+    volumes:
+      - ./cloud_m7/hardware:/app
+    working_dir: /app
+    command: >
+      bash -c "python edge_probe.py --fog-url http://192.168.10.50:8080/telemetry --host-id docker-pi-sensor-01 --interval 2.0 --count 15"
+    depends_on:
+      - fog-gateway
+
+  fog-gateway:
+    image: python:3.11-slim
+    container_name: cloud_m7_fog_gateway
+    networks:
+      edge_fog_net:
+        ipv4_address: 192.168.10.50
+      fog_cloud_net:
+        ipv4_address: 172.16.0.50
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      bash -c "python -c 'from cloud_m7.hardware.fog_receiver import FogHardwareGatewayServer; import time; s = FogHardwareGatewayServer(host=\"0.0.0.0\", port=8080); s.start_background(); print(\"Fog Gateway Active\"); time.sleep(300)'"
+    ports:
+      - "8080:8080"
+
+  cloud-analytics:
+    image: python:3.11-slim
+    container_name: cloud_m7_cloud_server
+    networks:
+      fog_cloud_net:
+        ipv4_address: 172.16.0.10
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      bash -c "python -m cloud_m7.cli demo"
+    depends_on:
+      - fog-gateway
+
+networks:
+  edge_fog_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+  fog_cloud_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24

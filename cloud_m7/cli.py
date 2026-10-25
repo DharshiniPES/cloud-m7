@@ -362,7 +362,7 @@ def main():
     parser = argparse.ArgumentParser(description="CLOUD-M7 Forensic Provenance Framework")
     parser.add_argument(
         "mode",
-        choices=["demo", "optimize", "simulate", "iterative", "storage", "bridge", "remediate", "mitre"],
+        choices=["demo", "optimize", "simulate", "iterative", "storage", "bridge", "remediate", "mitre", "dashboard", "hardware"],
         default="demo",
         nargs="?",
         help="Execution mode (default: demo)",
@@ -399,6 +399,14 @@ def main():
         run_remediation_demo()
     elif args.mode == "mitre":
         run_mitre_demo()
+    elif args.mode == "dashboard":
+        import subprocess
+        app_path = os.path.join(os.path.dirname(__file__), "dashboard", "app.py")
+        subprocess.run([sys.executable, "-m", "streamlit", "run", app_path])
+    elif args.mode == "hardware":
+        from cloud_m7.hardware.edge_probe import HardwareEdgeProbe
+        probe = HardwareEdgeProbe(host_id="rpi-4-demo-node")
+        probe.run_telemetry_loop(interval_sec=0.5, max_events=6, simulate_attack=True)
 
 
 if __name__ == "__main__":
