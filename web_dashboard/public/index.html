@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLOUD-M7 | Distributed Forensic Provenance Dashboard</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Vis.js Network (Hardware-Accelerated Graph Canvas) -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #0B0F19; color: #F3F4F6; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(55, 65, 81, 0.5); }
+    .glass-nav { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
+    .tab-active { color: #60A5FA; border-bottom: 2px solid #3B82F6; background: rgba(59, 130, 246, 0.08); }
+    #graph-canvas { width: 100%; height: 600px; background: #0A0E17; border-radius: 0.75rem; border: 1px solid #1F2937; }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #111827; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- TOP HEADER -->
+  <header class="glass-nav sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3.5">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/25">
+        <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="text-xl font-bold tracking-tight text-white">CLOUD-M7</span>
+          <span class="px-2 py-0.5 text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full">Node.js High-Speed</span>
+          <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 60 FPS
+          </span>
+        </div>
+        <p class="text-xs text-gray-400 font-medium">Tier-Adaptive Distributed Forensic Provenance | PES University Capstone</p>
+      </div>
+    </div>
+
+    <!-- DATASET SELECTOR & ACTIONS -->
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center bg-gray-900 border border-gray-700/80 rounded-lg px-3 py-1.5 text-sm">
+        <i data-lucide="database" class="w-4 h-4 text-gray-400 mr-2"></i>
+        <select id="dataset-select" class="bg-transparent text-gray-200 outline-none text-xs font-medium cursor-pointer pr-2">
+          <option value="synthetic">Synthetic Multi-Tier (Edge-Fog-Cloud Ground Truth)</option>
+          <option value="darpa_optc">DARPA OpTC (Enterprise Host Audit - JSONL)</option>
+          <option value="darpa_tc">DARPA TC (Transparent Computing - CDM)</option>
+          <option value="ton_iot">UNSW TON_IoT (IoT Sensor Telemetry - CSV)</option>
+          <option value="iot23">Aposemat IoT-23 (Zeek Malware Flow - TSV)</option>
+        </select>
+      </div>
+      <button id="btn-reload" class="flex items-center space-x-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-md transition cursor-pointer">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+        <span>Reload</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- QUICK STATS BAR -->
+  <section class="bg-gray-900/60 border-b border-gray-800 px-6 py-3">
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+      <div class="glass-card p-2.5 rounded-lg border border-gray-800">
+        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Total Events (E_i)</div>
+        <div id="stat-events" class="text-lg font-bold text-white mt-0.5">--</div>
+      </div>
+      <div class="glass-card p-2.5 rounded-lg border border-gray-800">
+        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Cross-Tier Flows</div>
+        <div id="stat-cross-flows" class="text-lg font-bold text-amber-400 mt-0.5">--</div>
+      </div>
+      <div class="glass-card p-2.5 rounded-lg border border-gray-800">
+        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Attack Path Hops</div>
+        <div id="stat-path-hops" class="text-lg font-bold text-red-400 mt-0.5">--</div>
+      </div>
+      <div class="glass-card p-2.5 rounded-lg border border-gray-800">
+        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Noise Pruned</div>
+        <div id="stat-noise-pruned" class="text-lg font-bold text-emerald-400 mt-0.5">--</div>
+      </div>
+      <div class="glass-card p-2.5 rounded-lg border border-gray-800">
+        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Choke Points</div>
+        <div id="stat-choke-points" class="text-lg font-bold text-yellow-400 mt-0.5">--</div>
+      </div>
+      <div class="glass-card p-2.5 rounded-lg border border-gray-800">
+        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">DuckDB SQL Latency</div>
+        <div id="stat-sql-latency" class="text-lg font-bold text-cyan-400 mt-0.5">--</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="flex border-b border-gray-800 bg-gray-950 px-6 overflow-x-auto text-xs font-semibold tracking-wide">
+    <button class="nav-tab tab-active px-4 py-3 flex items-center space-x-2 cursor-pointer transition" data-tab="tab-graph">
+      <i data-lucide="network" class="w-4 h-4"></i><span>1. Causal Graph</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-ingest">
+      <i data-lucide="upload-cloud" class="w-4 h-4"></i><span>2. Ingestion & Normalizer</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty1">
+      <i data-lucide="git-fork" class="w-4 h-4"></i><span>3. Novelty 1 (Iterative)</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty2">
+      <i data-lucide="target" class="w-4 h-4"></i><span>4. Novelty 2 (Choke Points)</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty3">
+      <i data-lucide="git-commit" class="w-4 h-4"></i><span>5. Novelty 3 (Causal Bridge)</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty4">
+      <i data-lucide="shield-check" class="w-4 h-4"></i><span>6. Novelty 4 (Remediation)</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty5">
+      <i data-lucide="compass" class="w-4 h-4"></i><span>7. Novelty 5 (MITRE ATT&CK)</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-sql">
+      <i data-lucide="terminal" class="w-4 h-4"></i><span>8. Parquet + DuckDB SQL</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-hardware">
+      <i data-lucide="cpu" class="w-4 h-4"></i><span>9. Hardware Testbed</span>
+    </button>
+  </nav>
+
+  <!-- MAIN TAB CONTENT AREA -->
+  <main class="flex-1 p-6 overflow-y-auto">
+
+    <!-- TAB 1: CAUSAL PROVENANCE GRAPH -->
+    <div id="tab-graph" class="tab-pane">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <!-- Canvas Column -->
+        <div class="lg:col-span-3 glass-card p-4 rounded-xl">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-3 text-xs">
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Edge Tier</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Fog Tier</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-purple-500"></span> Cloud Tier</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-500"></span> Attack Telemetry</span>
+              <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-yellow-400"></span> ★ Choke Point</span>
+            </div>
+            <div class="text-xs text-gray-400">
+              Drag, zoom, and click any node to view forensic metadata
+            </div>
+          </div>
+          <div id="graph-canvas"></div>
+        </div>
+
+        <!-- Node Details Sidebar -->
+        <div class="glass-card p-4 rounded-xl flex flex-col">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2 mb-3">
+            <i data-lucide="info" class="w-4 h-4 text-blue-400"></i> Node Forensic Details
+          </h3>
+          <div id="node-details" class="flex-1 text-xs text-gray-400 space-y-2.5">
+            <div class="p-3 bg-gray-900/60 rounded-lg border border-gray-800 text-center text-gray-500">
+              Click on any node in the graph to inspect its Canonical Schema attributes.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reconstructed Timeline -->
+      <div class="glass-card p-4 rounded-xl mt-4">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2 mb-3">
+          <i data-lucide="history" class="w-4 h-4 text-red-400"></i> Reconstructed Attack Progression (Root Entry -> Cloud Impact)
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left text-gray-300">
+            <thead class="bg-gray-900/80 text-gray-400 uppercase font-semibold">
+              <tr>
+                <th class="py-2.5 px-3">Step</th>
+                <th class="py-2.5 px-3">Tier</th>
+                <th class="py-2.5 px-3">Host ID</th>
+                <th class="py-2.5 px-3">Type</th>
+                <th class="py-2.5 px-3">Action</th>
+                <th class="py-2.5 px-3">Entity</th>
+                <th class="py-2.5 px-3">Forensic Description</th>
+              </tr>
+            </thead>
+            <tbody id="timeline-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: INGESTION & NORMALIZER -->
+    <div id="tab-ingest" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-2">
+          <i data-lucide="upload-cloud" class="w-5 h-5 text-blue-400"></i> Raw Security Dataset Upload & Auto-Normalizer
+        </h3>
+        <p class="text-xs text-gray-400 mb-4">
+          Upload raw JSON lines (DARPA OpTC), CDM JSON (DARPA TC), CSV telemetry (TON_IoT), or Zeek logs (Aposemat IoT-23).
+          The <code class="text-blue-300">DatasetNormalizerFactory</code> will automatically detect the schema and convert it into the Canonical Schema <span class="text-amber-300">&E_i;</span> with cryptographic SHA-256 non-repudiation.
+        </p>
+        <div class="flex items-center space-x-3">
+          <input type="file" id="upload-input" class="text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+          <button id="btn-upload" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="check-circle" class="w-4 h-4"></i> Upload & Normalize
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center gap-2">
+          <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Normalized Canonical Events (First 50 Records Preview)
+        </h3>
+        <div class="overflow-x-auto max-h-[450px]">
+          <table class="w-full text-xs text-left text-gray-300">
+            <thead class="bg-gray-900/90 text-gray-400 sticky top-0 uppercase font-semibold">
+              <tr>
+                <th class="py-2 px-3">UUID</th>
+                <th class="py-2 px-3">Timestamp</th>
+                <th class="py-2 px-3">Tier</th>
+                <th class="py-2 px-3">Host ID</th>
+                <th class="py-2 px-3">Type</th>
+                <th class="py-2 px-3">Action</th>
+                <th class="py-2 px-3">Entity / Target</th>
+                <th class="py-2 px-3">Is Attack</th>
+                <th class="py-2 px-3">SHA-256 Digest</th>
+              </tr>
+            </thead>
+            <tbody id="events-table-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: NOVELTY 1: ITERATIVE MULTI-ROOT DISCOVERY -->
+    <div id="tab-novelty1" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="git-fork" class="w-5 h-5 text-indigo-400"></i> Novelty 1: Hyperparameter-Tuned Iterative Multi-Root Discovery
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Standard single-pass forensic systems terminate at the first root cause, leaving stealthy secondary entry points undetected.
+          CLOUD-M7 executes an iterative backward traversal loop:
+          <code class="text-amber-300 font-semibold">&Delta;I_k = Impact(R_k) &middot; e^(-&lambda; &middot; k) &ge; &epsilon;</code>
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Iteration History Table -->
+        <div class="glass-card p-4 rounded-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Iteration History & Convergence</h4>
+          <table class="w-full text-xs text-left text-gray-300">
+            <thead class="bg-gray-900/80 text-gray-400 uppercase font-semibold">
+              <tr>
+                <th class="py-2 px-2.5">Iter</th>
+                <th class="py-2 px-2.5">Status</th>
+                <th class="py-2 px-2.5">New Nodes</th>
+                <th class="py-2 px-2.5">Marginal Gain %</th>
+                <th class="py-2 px-2.5">Stopping Reason</th>
+              </tr>
+            </thead>
+            <tbody id="n1-history-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+
+        <!-- Discovered Vectors -->
+        <div class="glass-card p-4 rounded-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Discovered Multi-Root Attack Entry Vectors</h4>
+          <div id="n1-vectors-container" class="space-y-2.5 max-h-[350px] overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: NOVELTY 2: CHOKE POINTS -->
+    <div id="tab-novelty2" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="target" class="w-5 h-5 text-yellow-400"></i> Novelty 2: Interconnected Multi-Sensor Graph & Articulation Choke Points
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Adversaries breach multiple edge sensors that converge toward cloud targets. Graph cut-vertex theory identifies the single articulation point whose containment severs 100% of attack paths:
+          <code class="text-amber-300 font-semibold">E_cut(v) = |{p &isin; P_multi | v &isin; p}| / |P_multi|</code>
+        </p>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Convergence Choke-Point Bottleneck Analysis</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left text-gray-300">
+            <thead class="bg-gray-900/80 text-gray-400 uppercase font-semibold">
+              <tr>
+                <th class="py-2 px-3">Tier</th>
+                <th class="py-2 px-3">Host ID</th>
+                <th class="py-2 px-3">Action / Entity</th>
+                <th class="py-2 px-3">Containment Efficiency</th>
+                <th class="py-2 px-3">Paths Severed</th>
+                <th class="py-2 px-3">Is Cut-Vertex</th>
+                <th class="py-2 px-3">Mitigation Strategy</th>
+              </tr>
+            </thead>
+            <tbody id="n2-choke-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: NOVELTY 3: CAUSAL BRIDGE IMPUTATION -->
+    <div id="tab-novelty3" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="git-commit" class="w-5 h-5 text-pink-400"></i> Novelty 3: Causal Bridge Imputation under Lossy Network Conditions
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          When wireless IoT networks drop packets, traditional graph tracing hits a dead end. CLOUD-M7 uses Bayesian confidence scoring to infer and heal missing hops:
+          <code class="text-pink-300 font-semibold">P(bridge(u, v)) = &alpha; &middot; e^(-|&tau;_v - &tau;_u| / &sigma;_t) + &beta; &middot; Sim_endpoint + &gamma; &middot; Sim_lineage &ge; &theta;</code>
+        </p>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Synthesized Causal Bridges & Repaired Trajectories</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left text-gray-300">
+            <thead class="bg-gray-900/80 text-gray-400 uppercase font-semibold">
+              <tr>
+                <th class="py-2 px-3">Source Node</th>
+                <th class="py-2 px-3">Target Node</th>
+                <th class="py-2 px-3">Time Delta</th>
+                <th class="py-2 px-3">Endpoint Similarity</th>
+                <th class="py-2 px-3">Confidence Score</th>
+                <th class="py-2 px-3">Imputation Rationale</th>
+              </tr>
+            </thead>
+            <tbody id="n3-bridge-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: NOVELTY 4: ACTIVE CONTAINMENT SYNTHESIS -->
+    <div id="tab-novelty4" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i> Novelty 4: Automated Active Choke-Point Remediation (Zero Blast-Radius)
+            </h3>
+            <p class="text-xs text-gray-400">
+              Transforms passive forensics into active automated defense. Synthesizes surgical eBPF/cgroup rules balancing Containment Efficacy (CE) against Collateral Disruption (CDI):
+              <code class="text-emerald-300 font-semibold">RPS = CE / (1.0 + &lambda; &middot; CDI)</code>
+            </p>
+          </div>
+          <button id="btn-download-script" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-600/20">
+            <i data-lucide="download" class="w-4 h-4"></i> Download Containment Script (.sh)
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Policies Table -->
+        <div class="glass-card p-4 rounded-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Synthesized Containment Policies</h4>
+          <div id="n4-policies-container" class="space-y-3 max-h-[400px] overflow-y-auto"></div>
+        </div>
+
+        <!-- Executable Script Preview -->
+        <div class="glass-card p-4 rounded-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Generated Bash Orchestration Script</h4>
+          <pre id="n4-script-preview" class="text-[11px] text-emerald-400 bg-gray-950 p-3.5 rounded-lg border border-gray-800 overflow-x-auto max-h-[400px]"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: NOVELTY 5: MITRE ATT&CK MATRIX -->
+    <div id="tab-novelty5" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="compass" class="w-5 h-5 text-amber-400"></i> Novelty 5: Multi-Tier MITRE ATT&CK Matrix Motif Mapping
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Universal semantic translator mapping low-level operating system syscalls (<code class="text-gray-300">sys_clone, execve, connect, write</code>) into standardized MITRE Enterprise and ICS/IoT tactics and techniques.
+        </p>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Adversary Kill-Chain Progression Matrix</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left text-gray-300">
+            <thead class="bg-gray-900/80 text-gray-400 uppercase font-semibold">
+              <tr>
+                <th class="py-2 px-3">Tactic Stage</th>
+                <th class="py-2 px-3">Technique ID & Name</th>
+                <th class="py-2 px-3">Tier</th>
+                <th class="py-2 px-3">Host ID</th>
+                <th class="py-2 px-3">Confidence</th>
+                <th class="py-2 px-3">Forensic Evidence Reasoning</th>
+              </tr>
+            </thead>
+            <tbody id="n5-mitre-body" class="divide-y divide-gray-800"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 8: PARQUET + DUCKDB SQL -->
+    <div id="tab-sql" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="terminal" class="w-5 h-5 text-cyan-400"></i> Accessible Columnar Storage: Apache Parquet + DuckDB
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Zero-server analytical database querying on-disk compressed Parquet files directly in under 15ms.
+        </p>
+        <div class="mt-3 flex items-center gap-3">
+          <input type="text" id="sql-input" value="SELECT tier, event_type, COUNT(*) as count, SUM(CASE WHEN is_attack THEN 1 ELSE 0 END) as attacks FROM provenance GROUP BY tier, event_type ORDER BY tier" class="flex-1 bg-gray-950 border border-gray-700 rounded-lg px-3.5 py-2 text-xs text-cyan-300 font-mono outline-none">
+          <button id="btn-run-sql" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="play" class="w-4 h-4"></i> Execute SQL
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Query Results Table</h4>
+          <span id="sql-perf-badge" class="text-xs font-mono text-cyan-400"></span>
+        </div>
+        <div class="overflow-x-auto max-h-[350px]">
+          <table class="w-full text-xs text-left text-gray-300">
+            <thead id="sql-thead" class="bg-gray-900/80 text-gray-400 uppercase font-semibold"></thead>
+            <tbody id="sql-tbody" class="divide-y divide-gray-800 font-mono"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 9: HARDWARE TESTBED -->
+    <div id="tab-hardware" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
+              <i data-lucide="cpu" class="w-5 h-5 text-rose-400"></i> Physical Hardware Testbed & Live Edge Probe
+            </h3>
+            <p class="text-xs text-gray-400">
+              Deployable across physical Raspberry Pi 4 / 3B+ devices and Laptop Fog Gateways.
+            </p>
+          </div>
+          <button id="btn-trigger-hardware" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer shadow-lg shadow-rose-600/20">
+            <i data-lucide="zap" class="w-4 h-4"></i> Trigger Live Hardware Telemetry Cycle (5 Events)
+          </button>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-xl">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Hardware Telemetry Stream</h4>
+        <div id="hardware-events-container" class="space-y-2.5 max-h-[400px] overflow-y-auto">
+          <div class="p-3 bg-gray-900/60 rounded-lg text-xs text-gray-400">
+            Click "Trigger Live Hardware Telemetry Cycle" to simulate physical Raspberry Pi thermal and process events.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="glass-nav px-6 py-2.5 text-center text-[11px] text-gray-500 flex items-center justify-between">
+    <span>CLOUD-M7 Capstone Framework &bull; Department of CSE &bull; PES University</span>
+    <span class="font-mono text-gray-400">Node.js Express + Python Bridge API Active</span>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

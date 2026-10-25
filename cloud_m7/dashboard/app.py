@@ -3,6 +3,12 @@ CLOUD-M7 Interactive Forensic Provenance & Attack-Path Reconstruction Dashboard.
 Built using Open-Source Streamlit, PyVis, NetworkX, DuckDB, and Apache Parquet.
 """
 
+import sys
+from pathlib import Path
+_ROOT = str(Path(__file__).resolve().parent.parent.parent)
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)
+
 import io
 import json
 import os

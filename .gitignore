@@ -49,6 +49,13 @@ data/raw/*
 data/processed/*
 !data/processed/.gitkeep
 
+# Node.js
+node_modules/
+web_dashboard/node_modules/
+web_dashboard/uploads/*
+!web_dashboard/uploads/.gitkeep
+
+
 # OS generated files
 .DS_Store
 Thumbs.db
