@@ -95,39 +95,42 @@
 
   <!-- NAVIGATION TABS -->
   <nav class="flex border-b border-gray-800 bg-gray-950 px-6 overflow-x-auto text-xs font-semibold tracking-wide">
-    <button class="nav-tab tab-active px-4 py-3 flex items-center space-x-2 cursor-pointer transition" data-tab="tab-graph">
+    <button class="nav-tab tab-active px-4 py-3 flex items-center space-x-2 cursor-pointer transition whitespace-nowrap" data-tab="tab-graph">
       <i data-lucide="network" class="w-4 h-4"></i><span>1. Causal Graph</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-ingest">
-      <i data-lucide="upload-cloud" class="w-4 h-4"></i><span>2. Ingestion & Normalizer</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-opensource">
+      <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i><span>2. Open-Source Stack</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty1">
-      <i data-lucide="git-fork" class="w-4 h-4"></i><span>3. Novelty 1 (Iterative)</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-datasets">
+      <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i><span>3. Real Datasets</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty2">
-      <i data-lucide="target" class="w-4 h-4"></i><span>4. Novelty 2 (Choke Points)</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-defense">
+      <i data-lucide="shield-check" class="w-4 h-4 text-red-400"></i><span>4. Attack Defense & Stopping</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty3">
-      <i data-lucide="git-commit" class="w-4 h-4"></i><span>5. Novelty 3 (Causal Bridge)</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-hardware">
+      <i data-lucide="cpu" class="w-4 h-4 text-rose-400"></i><span>5. Hardware Guide & Probe</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty4">
-      <i data-lucide="shield-check" class="w-4 h-4"></i><span>6. Novelty 4 (Remediation)</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty1">
+      <i data-lucide="git-fork" class="w-4 h-4 text-indigo-400"></i><span>6. Novelty 1 (Iterative)</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-novelty5">
-      <i data-lucide="compass" class="w-4 h-4"></i><span>7. Novelty 5 (MITRE ATT&CK)</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty2">
+      <i data-lucide="target" class="w-4 h-4 text-yellow-400"></i><span>7. Novelty 2 (Choke Points)</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-sql">
-      <i data-lucide="terminal" class="w-4 h-4"></i><span>8. Parquet + DuckDB SQL</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty3">
+      <i data-lucide="git-commit" class="w-4 h-4 text-pink-400"></i><span>8. Novelty 3 (Causal Bridge)</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition" data-tab="tab-hardware">
-      <i data-lucide="cpu" class="w-4 h-4"></i><span>9. Hardware Testbed</span>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty5">
+      <i data-lucide="compass" class="w-4 h-4 text-amber-400"></i><span>9. Novelty 5 (MITRE ATT&CK)</span>
+    </button>
+    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-sql">
+      <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i><span>10. Parquet + DuckDB SQL</span>
     </button>
   </nav>
 
   <!-- MAIN TAB CONTENT AREA -->
   <main class="flex-1 p-6 overflow-y-auto">
 
-    <!-- TAB 1: CAUSAL PROVENANCE GRAPH -->
+    <!-- TAB 1: CAUSAL PROVENANCE GRAPH & TIMELINE -->
     <div id="tab-graph" class="tab-pane">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <!-- Canvas Column -->
@@ -184,16 +187,205 @@
       </div>
     </div>
 
-    <!-- TAB 2: INGESTION & NORMALIZER -->
-    <div id="tab-ingest" class="tab-pane hidden space-y-4">
+    <!-- TAB 2: OPEN-SOURCE MULTI-TIER ECOSYSTEM STACK -->
+    <div id="tab-opensource" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
-        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-2">
-          <i data-lucide="upload-cloud" class="w-5 h-5 text-blue-400"></i> Raw Security Dataset Upload & Auto-Normalizer
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="layers" class="w-5 h-5 text-cyan-400"></i> Open-Source Multi-Tier Security Ecosystem Integration
         </h3>
-        <p class="text-xs text-gray-400 mb-4">
-          Upload raw JSON lines (DARPA OpTC), CDM JSON (DARPA TC), CSV telemetry (TON_IoT), or Zeek logs (Aposemat IoT-23).
-          The <code class="text-blue-300">DatasetNormalizerFactory</code> will automatically detect the schema and convert it into the Canonical Schema <span class="text-amber-300">&E_i;</span> with cryptographic SHA-256 non-repudiation.
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Instead of writing fragile, custom loggers from scratch, <strong>CLOUD-M7 builds upon proven, production-grade open-source components</strong> at every tier. 
+          It serves as the <strong>central correlation brain</strong> that ingests their siloed logs, converts them into Canonical Schema <code class="text-amber-300">&E_i;</code>, and reconstructs end-to-end attack paths.
         </p>
+      </div>
+
+      <!-- 3 Tier Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Edge Card -->
+        <div class="glass-card p-4 rounded-xl border-t-4 border-emerald-500 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Edge Tier Stack</span>
+            <span class="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">Sensors & Devices</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Low-latency, lightweight telemetry capture on resource-constrained hardware.</p>
+          <div class="space-y-2 text-xs">
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">Linux auditd</span>
+              <span class="text-[11px] text-gray-400">Captures low-level kernel system calls (<code class="text-emerald-300">sys_clone, execve, openat</code>) on Raspberry Pi OS.</span>
+            </div>
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">eBPF / Tracee</span>
+              <span class="text-[11px] text-gray-400">High-efficiency in-kernel tracing with negligible CPU overhead (<5% footprint).</span>
+            </div>
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">sysfs Telemetry Daemon</span>
+              <span class="text-[11px] text-gray-400">Reads physical CPU thermal & hardware metrics from <code class="text-cyan-300">/sys/class/thermal</code>.</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-400 italic bg-gray-950 p-2 rounded border border-gray-800">
+            <strong>Limitation without CLOUD-M7:</strong> Completely blind once an attacker moves packets across a Wi-Fi socket.
+          </div>
+        </div>
+
+        <!-- Fog Card -->
+        <div class="glass-card p-4 rounded-xl border-t-4 border-amber-500 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Fog Tier Stack</span>
+            <span class="px-2 py-0.5 text-[10px] bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30">Gateways & Routers</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Intermediate aggregation, packet inspection, and choke-point containment.</p>
+          <div class="space-y-2 text-xs">
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">Zeek (Bro) IDS</span>
+              <span class="text-[11px] text-gray-400">Network protocol analyzer logging connection 5-tuples (<code class="text-amber-300">conn.log</code>, HTTP, DNS).</span>
+            </div>
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">Eclipse Mosquitto</span>
+              <span class="text-[11px] text-gray-400">Lightweight MQTT message broker routing sensor telemetry across IoT clusters.</span>
+            </div>
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">nftables / iptables + XDP</span>
+              <span class="text-[11px] text-gray-400">High-speed kernel firewall and driver-layer eBPF XDP packet discard filter.</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-400 italic bg-gray-950 p-2 rounded border border-gray-800">
+            <strong>Limitation without CLOUD-M7:</strong> Sees network traffic but cannot tell which process PID or user created it.
+          </div>
+        </div>
+
+        <!-- Cloud Card -->
+        <div class="glass-card p-4 rounded-xl border-t-4 border-purple-500 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Cloud Tier Stack</span>
+            <span class="px-2 py-0.5 text-[10px] bg-purple-500/20 text-purple-300 rounded-full border border-purple-500/30">Datacenter & Analytics</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Deep causal analytics, columnar storage, and enterprise compliance auditing.</p>
+          <div class="space-y-2 text-xs">
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">CamFlow (Linux LSM)</span>
+              <span class="text-[11px] text-gray-400">W3C PROV-compliant whole-system provenance capture for Linux operating systems.</span>
+            </div>
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">Falco (CNCF)</span>
+              <span class="text-[11px] text-gray-400">Cloud-native runtime security for Kubernetes, Docker, and containerized clusters.</span>
+            </div>
+            <div class="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
+              <span class="font-bold text-white block">Apache Parquet + DuckDB</span>
+              <span class="text-[11px] text-gray-400">Columnar storage with 87% compression and sub-2ms zero-server SQL querying.</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-gray-400 italic bg-gray-950 p-2 rounded border border-gray-800">
+            <strong>Limitation without CLOUD-M7:</strong> Isolated in the datacenter, completely blind to physical edge origin points.
+          </div>
+        </div>
+      </div>
+
+      <!-- Fusion Engine Banner -->
+      <div class="glass-card p-4 rounded-xl bg-gradient-to-r from-blue-950/40 via-indigo-950/40 to-purple-950/40 border border-blue-900/40">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-blue-300 mb-1.5 flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-blue-400"></i> The CLOUD-M7 Unification Layer
+        </h4>
+        <p class="text-xs text-gray-300 leading-relaxed">
+          CLOUD-M7's <strong>DatasetNormalizerFactory</strong> and <strong>Cross-Tier Causal Fusion Engine</strong> ingest telemetry from all the above tools, converts each event into the mathematical tuple <code class="text-amber-300 font-mono">&E_i; = &lang;UUID, &tau;, Tier, Host, Type, Payload, Hash&rang;</code>, verifies cryptographic SHA-256 integrity, and synthesizes a single tamper-evident graph.
+        </p>
+      </div>
+    </div>
+
+    <!-- TAB 3: REAL DATASETS & NORMALIZER -->
+    <div id="tab-datasets" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="database" class="w-5 h-5 text-emerald-400"></i> Real-World Security Benchmark Datasets
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          CLOUD-M7 is evaluated on four authoritative cybersecurity benchmark datasets representing each computing layer. Click any card below to instantly load and analyze that dataset:
+        </p>
+      </div>
+
+      <!-- 4 Real Dataset Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <!-- DARPA OpTC -->
+        <div class="glass-card p-4 rounded-xl border border-purple-900/40 hover:border-purple-500/60 transition space-y-2.5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-purple-400">DARPA OpTC</span>
+              <span class="px-1.5 py-0.5 text-[10px] bg-purple-900/50 text-purple-300 rounded font-semibold">Cloud Tier</span>
+            </div>
+            <p class="text-[11px] text-gray-300">Operation Transparent Computing enterprise host audit logs in CAR JSONL format.</p>
+            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
+              <div><strong>Attacks:</strong> APT32, Lateral Pivoting</div>
+              <div><strong>Format:</strong> JSON Lines (.jsonl)</div>
+              <div><strong>Adapter:</strong> OptcAdapter</div>
+            </div>
+          </div>
+          <button class="btn-load-dataset w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="darpa_optc">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i> Load DARPA OpTC
+          </button>
+        </div>
+
+        <!-- DARPA TC -->
+        <div class="glass-card p-4 rounded-xl border border-amber-900/40 hover:border-amber-500/60 transition space-y-2.5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-amber-400">DARPA TC</span>
+              <span class="px-1.5 py-0.5 text-[10px] bg-amber-900/50 text-amber-300 rounded font-semibold">Fog Tier</span>
+            </div>
+            <p class="text-[11px] text-gray-300">Transparent Computing THEIA & Cadets BSD/Linux kernel CDM provenance logs.</p>
+            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
+              <div><strong>Attacks:</strong> BIND exploit, Root Backdoor</div>
+              <div><strong>Format:</strong> CDM JSON (.json)</div>
+              <div><strong>Adapter:</strong> TcAdapter</div>
+            </div>
+          </div>
+          <button class="btn-load-dataset w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="darpa_tc">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i> Load DARPA TC
+          </button>
+        </div>
+
+        <!-- TON_IoT -->
+        <div class="glass-card p-4 rounded-xl border border-emerald-900/40 hover:border-emerald-500/60 transition space-y-2.5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-emerald-400">UNSW TON_IoT</span>
+              <span class="px-1.5 py-0.5 text-[10px] bg-emerald-900/50 text-emerald-300 rounded font-semibold">Edge Tier</span>
+            </div>
+            <p class="text-[11px] text-gray-300">UNSW Canberra Industrial IoT sensor telemetry and physical tamper dataset.</p>
+            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
+              <div><strong>Attacks:</strong> Modbus Injection, DoS, XSS</div>
+              <div><strong>Format:</strong> CSV Telemetry (.csv)</div>
+              <div><strong>Adapter:</strong> TonIotAdapter</div>
+            </div>
+          </div>
+          <button class="btn-load-dataset w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="ton_iot">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i> Load TON_IoT
+          </button>
+        </div>
+
+        <!-- IoT-23 -->
+        <div class="glass-card p-4 rounded-xl border border-red-900/40 hover:border-red-500/60 transition space-y-2.5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-red-400">Aposemat IoT-23</span>
+              <span class="px-1.5 py-0.5 text-[10px] bg-red-900/50 text-red-300 rounded font-semibold">Edge/Fog Flow</span>
+            </div>
+            <p class="text-[11px] text-gray-300">Stratosphere Lab real malware traffic captured from infected physical IoT devices.</p>
+            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
+              <div><strong>Attacks:</strong> Mirai Botnet, Torii Malware</div>
+              <div><strong>Format:</strong> Zeek conn.log (TSV/CSV)</div>
+              <div><strong>Adapter:</strong> Iot23Adapter</div>
+            </div>
+          </div>
+          <button class="btn-load-dataset w-full bg-red-600 hover:bg-red-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="iot23">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i> Load IoT-23
+          </button>
+        </div>
+      </div>
+
+      <!-- Upload Custom File Box -->
+      <div class="glass-card p-5 rounded-xl">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-2 flex items-center gap-2">
+          <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-400"></i> Upload Custom Dataset (Automatic Schema Detection)
+        </h4>
         <div class="flex items-center space-x-3">
           <input type="file" id="upload-input" class="text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
           <button id="btn-upload" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
@@ -202,10 +394,11 @@
         </div>
       </div>
 
+      <!-- First 50 Normalized Canonical Events -->
       <div class="glass-card p-4 rounded-xl">
-        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center gap-2">
-          <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Normalized Canonical Events (First 50 Records Preview)
-        </h3>
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center gap-2">
+          <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Normalized Canonical Events (First 50 Records Preview with Cryptographic Hashes)
+        </h4>
         <div class="overflow-x-auto max-h-[450px]">
           <table class="w-full text-xs text-left text-gray-300">
             <thead class="bg-gray-900/90 text-gray-400 sticky top-0 uppercase font-semibold">
@@ -227,7 +420,177 @@
       </div>
     </div>
 
-    <!-- TAB 3: NOVELTY 1: ITERATIVE MULTI-ROOT DISCOVERY -->
+    <!-- TAB 4: ACTIVE ATTACK DEFENSE & STOPPING -->
+    <div id="tab-defense" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
+              <i data-lucide="shield-check" class="w-5 h-5 text-red-400"></i> Active Attack Defense & Choke-Point Remediation Center
+            </h3>
+            <p class="text-xs text-gray-400">
+              Real-time automated defense. CLOUD-M7 calculates the optimal choke-point intervention using graph cut-vertex theory, severing 100% of attack paths with zero collateral disruption.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="defense-status-badge" class="px-3 py-1 text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> DEFENSE READY
+            </span>
+            <button id="btn-download-script" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-600/20">
+              <i data-lucide="download" class="w-4 h-4"></i> Download Script (.sh)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Tier Defense Architecture Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Edge Defense -->
+        <div class="glass-card p-4 rounded-xl border border-gray-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 uppercase">1. Edge Defense</span>
+            <span class="text-[10px] font-mono text-gray-400">cgroup v2 freezer</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Freezes the rogue process PID on the Raspberry Pi without rebooting or halting legitimate sensors.</p>
+          <div class="bg-gray-950 p-2.5 rounded font-mono text-[11px] text-emerald-300 border border-gray-800 break-all select-all">
+            echo 1 > /sys/fs/cgroup/pids/isolated/cgroup.freeze<br>
+            kill -9 &lt;PID&gt; && chmod 000 /usr/local/bin/tamper.sh
+          </div>
+        </div>
+
+        <!-- Fog Choke Point Defense (Highlight) -->
+        <div class="glass-card p-4 rounded-xl border-2 border-yellow-500/80 bg-yellow-950/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-yellow-300 uppercase flex items-center gap-1">
+              ★ 2. Fog Choke Point (Key Defense)
+            </span>
+            <span class="text-[10px] font-mono text-yellow-400">100% Path Sever</span>
+          </div>
+          <p class="text-[11px] text-gray-200">Cut-vertex containment severs all lateral attack traffic before it ever touches the Cloud database.</p>
+          <div class="bg-gray-950 p-2.5 rounded font-mono text-[11px] text-yellow-300 border border-yellow-800/60 break-all select-all">
+            iptables -I FORWARD 1 -s 192.168.1.101 -p tcp --dport 8080 -j DROP<br>
+            xdp-filter load --dev eth0 --ip 192.168.1.101
+          </div>
+        </div>
+
+        <!-- Cloud Defense -->
+        <div class="glass-card p-4 rounded-xl border border-gray-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-400 uppercase">3. Cloud Defense</span>
+            <span class="text-[10px] font-mono text-gray-400">IAM & SG Quarantine</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Revokes leaked AWS STS session tokens and locks down the cloud database Security Group to localhost.</p>
+          <div class="bg-gray-950 p-2.5 rounded font-mono text-[11px] text-purple-300 border border-gray-800 break-all select-all">
+            aws iam put-user-policy --user-name fog-sync --policy file://deny-all.json<br>
+            aws ec2 modify-security-group-rules ...
+          </div>
+        </div>
+      </div>
+
+      <!-- Synthesized Policies & Executable Script Preview -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Policies Column -->
+        <div class="glass-card p-4 rounded-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center justify-between">
+            <span>Synthesized Containment Policies (RPS Ranked)</span>
+            <span class="text-[10px] font-mono text-emerald-400">RPS = CE / (1 + &lambda; &middot; CDI)</span>
+          </h4>
+          <div id="n4-policies-container" class="space-y-3 max-h-[400px] overflow-y-auto"></div>
+        </div>
+
+        <!-- Executable Script Preview -->
+        <div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Generated Bash Orchestration Script</h4>
+              <button id="btn-copy-script" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Script
+              </button>
+            </div>
+            <pre id="n4-script-preview" class="text-[11px] text-emerald-400 bg-gray-950 p-3.5 rounded-lg border border-gray-800 overflow-x-auto max-h-[350px]"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: HARDWARE LAB GUIDE & PROBE -->
+    <div id="tab-hardware" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
+              <i data-lucide="cpu" class="w-5 h-5 text-rose-400"></i> Physical Hardware Setup Guide & Live Edge Probe
+            </h3>
+            <p class="text-xs text-gray-400">
+              Complete step-by-step instructions for deploying CLOUD-M7 across physical Raspberry Pi 4/3B+ devices, laptop Fog gateways, and single-machine Docker emulation.
+            </p>
+          </div>
+          <button id="btn-trigger-hardware" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer shadow-lg shadow-rose-600/20">
+            <i data-lucide="zap" class="w-4 h-4"></i> Trigger Live Hardware Telemetry Cycle (5 Events)
+          </button>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Hardware Guide Accordion / Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Step 1: Fog Gateway Setup -->
+        <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-400 uppercase">Step 1: Start Fog Gateway (Laptop)</span>
+            <span class="text-[10px] font-mono text-gray-400">Port 8080</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Run this on your central laptop connected to the same Wi-Fi subnet (e.g. <code class="text-amber-300">192.168.1.50</code>):</p>
+          <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-amber-300 border border-gray-800 overflow-x-auto select-all">python -c "from cloud_m7.hardware.fog_receiver import FogHardwareGatewayServer; s = FogHardwareGatewayServer(port=8080); s.start_background(); import time; time.sleep(86400)"</pre>
+        </div>
+
+        <!-- Step 2: Raspberry Pi Probe Deployment -->
+        <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 uppercase">Step 2: Deploy Edge Probe (Raspberry Pi)</span>
+            <span class="text-[10px] font-mono text-gray-400">Raspberry Pi OS</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Copy the probe to the Raspberry Pi and launch continuous thermal telemetry streaming:</p>
+          <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-emerald-300 border border-gray-800 overflow-x-auto select-all">scp cloud_m7/hardware/edge_probe.py pi@192.168.1.101:~/
+ssh pi@192.168.1.101
+python3 edge_probe.py --fog-url http://192.168.1.50:8080/telemetry --interval 2.0</pre>
+        </div>
+
+        <!-- Step 3: Attack Injection on Pi -->
+        <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-red-400 uppercase">Step 3: Inject Attack on Raspberry Pi</span>
+            <span class="text-[10px] font-mono text-gray-400">Firmware Tamper</span>
+          </div>
+          <p class="text-[11px] text-gray-300">In a second terminal on the Pi, simulate an unauthorized firmware injection attempt:</p>
+          <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-red-300 border border-gray-800 overflow-x-auto select-all">python3 -c "from edge_probe import generate_hardware_event, transmit_telemetry; e = generate_hardware_event(event_type='Process', action='exec', entity='/usr/local/bin/tamper_firmware.sh', is_attack=True); transmit_telemetry('http://192.168.1.50:8080/telemetry', [e])"</pre>
+        </div>
+
+        <!-- Step 4: Docker Single-Machine Emulation -->
+        <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-cyan-400 uppercase">Zero-Cost Fallback: Docker Emulation</span>
+            <span class="text-[10px] font-mono text-gray-400">Single Machine</span>
+          </div>
+          <p class="text-[11px] text-gray-300">If physical Raspberry Pi boards are not available in the lab, run the complete 3-tier topology:</p>
+          <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-cyan-300 border border-gray-800 overflow-x-auto select-all">docker-compose -f docker-compose.hardware-testbed.yml up --build</pre>
+        </div>
+      </div>
+
+      <!-- Live Telemetry Stream Container -->
+      <div class="glass-card p-4 rounded-xl">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center justify-between">
+          <span>Live Hardware Telemetry Stream (Raspberry Pi CPU & Process Readings)</span>
+          <span class="text-[10px] text-gray-500 font-mono">HMAC-SHA256 Authenticated</span>
+        </h4>
+        <div id="hardware-events-container" class="space-y-2.5 max-h-[400px] overflow-y-auto">
+          <div class="p-3 bg-gray-900/60 rounded-lg text-xs text-gray-400">
+            Click "Trigger Live Hardware Telemetry Cycle" above to interrogate physical / simulated Raspberry Pi CPU temperature sensors.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: NOVELTY 1: ITERATIVE MULTI-ROOT DISCOVERY -->
     <div id="tab-novelty1" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
@@ -266,7 +629,7 @@
       </div>
     </div>
 
-    <!-- TAB 4: NOVELTY 2: CHOKE POINTS -->
+    <!-- TAB 7: NOVELTY 2: CHOKE POINTS -->
     <div id="tab-novelty2" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
@@ -299,7 +662,7 @@
       </div>
     </div>
 
-    <!-- TAB 5: NOVELTY 3: CAUSAL BRIDGE IMPUTATION -->
+    <!-- TAB 8: NOVELTY 3: CAUSAL BRIDGE IMPUTATION -->
     <div id="tab-novelty3" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
@@ -331,41 +694,7 @@
       </div>
     </div>
 
-    <!-- TAB 6: NOVELTY 4: ACTIVE CONTAINMENT SYNTHESIS -->
-    <div id="tab-novelty4" class="tab-pane hidden space-y-4">
-      <div class="glass-card p-5 rounded-xl">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
-              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i> Novelty 4: Automated Active Choke-Point Remediation (Zero Blast-Radius)
-            </h3>
-            <p class="text-xs text-gray-400">
-              Transforms passive forensics into active automated defense. Synthesizes surgical eBPF/cgroup rules balancing Containment Efficacy (CE) against Collateral Disruption (CDI):
-              <code class="text-emerald-300 font-semibold">RPS = CE / (1.0 + &lambda; &middot; CDI)</code>
-            </p>
-          </div>
-          <button id="btn-download-script" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-600/20">
-            <i data-lucide="download" class="w-4 h-4"></i> Download Containment Script (.sh)
-          </button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Policies Table -->
-        <div class="glass-card p-4 rounded-xl">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Synthesized Containment Policies</h4>
-          <div id="n4-policies-container" class="space-y-3 max-h-[400px] overflow-y-auto"></div>
-        </div>
-
-        <!-- Executable Script Preview -->
-        <div class="glass-card p-4 rounded-xl">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Generated Bash Orchestration Script</h4>
-          <pre id="n4-script-preview" class="text-[11px] text-emerald-400 bg-gray-950 p-3.5 rounded-lg border border-gray-800 overflow-x-auto max-h-[400px]"></pre>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 7: NOVELTY 5: MITRE ATT&CK MATRIX -->
+    <!-- TAB 9: NOVELTY 5: MITRE ATT&CK MATRIX -->
     <div id="tab-novelty5" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
@@ -396,7 +725,7 @@
       </div>
     </div>
 
-    <!-- TAB 8: PARQUET + DUCKDB SQL -->
+    <!-- TAB 10: PARQUET + DUCKDB SQL -->
     <div id="tab-sql" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
@@ -423,34 +752,6 @@
             <thead id="sql-thead" class="bg-gray-900/80 text-gray-400 uppercase font-semibold"></thead>
             <tbody id="sql-tbody" class="divide-y divide-gray-800 font-mono"></tbody>
           </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 9: HARDWARE TESTBED -->
-    <div id="tab-hardware" class="tab-pane hidden space-y-4">
-      <div class="glass-card p-5 rounded-xl">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
-              <i data-lucide="cpu" class="w-5 h-5 text-rose-400"></i> Physical Hardware Testbed & Live Edge Probe
-            </h3>
-            <p class="text-xs text-gray-400">
-              Deployable across physical Raspberry Pi 4 / 3B+ devices and Laptop Fog Gateways.
-            </p>
-          </div>
-          <button id="btn-trigger-hardware" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer shadow-lg shadow-rose-600/20">
-            <i data-lucide="zap" class="w-4 h-4"></i> Trigger Live Hardware Telemetry Cycle (5 Events)
-          </button>
-        </div>
-      </div>
-
-      <div class="glass-card p-4 rounded-xl">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Hardware Telemetry Stream</h4>
-        <div id="hardware-events-container" class="space-y-2.5 max-h-[400px] overflow-y-auto">
-          <div class="p-3 bg-gray-900/60 rounded-lg text-xs text-gray-400">
-            Click "Trigger Live Hardware Telemetry Cycle" to simulate physical Raspberry Pi thermal and process events.
-          </div>
         </div>
       </div>
     </div>

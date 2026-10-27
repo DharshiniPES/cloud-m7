@@ -70,6 +70,38 @@ function setupEventListeners() {
   });
   btnTriggerHardware.addEventListener('click', handleHardwareTrigger);
   btnDownloadScript.addEventListener('click', handleDownloadScript);
+
+  // 1-Click Dataset Loading from Showcase Cards
+  document.querySelectorAll('.btn-load-dataset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ds = btn.getAttribute('data-dataset');
+      if (ds) {
+        datasetSelect.value = ds;
+        loadAnalysis(ds);
+        // Switch to Causal Graph tab to see it visually
+        const graphTabBtn = document.querySelector('[data-tab="tab-graph"]');
+        if (graphTabBtn) graphTabBtn.click();
+      }
+    });
+  });
+
+  // Copy Generated Script Button
+  const btnCopyScript = document.getElementById('btn-copy-script');
+  if (btnCopyScript) {
+    btnCopyScript.addEventListener('click', () => {
+      const scriptText = n4ScriptPreview.textContent;
+      if (scriptText) {
+        navigator.clipboard.writeText(scriptText).then(() => {
+          btnCopyScript.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-semibold">Copied!</span>';
+          lucide.createIcons();
+          setTimeout(() => {
+            btnCopyScript.innerHTML = '<i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Script';
+            lucide.createIcons();
+          }, 2000);
+        });
+      }
+    });
+  }
 }
 
 // ============================================================================
@@ -499,6 +531,17 @@ function renderNovelty4(n4) {
   }
 
   n4ScriptPreview.textContent = n4.deployment_script || '# No deployment script generated.';
+
+  const defenseBadge = document.getElementById('defense-status-badge');
+  if (defenseBadge) {
+    if (policies.length > 0) {
+      defenseBadge.className = 'px-3 py-1 text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full flex items-center gap-1.5';
+      defenseBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> CONTAINED (100% PATHS SEVERED)';
+    } else {
+      defenseBadge.className = 'px-3 py-1 text-xs font-bold bg-gray-800 text-gray-400 rounded-full flex items-center gap-1.5';
+      defenseBadge.innerHTML = 'STANDBY (NO ATTACKS)';
+    }
+  }
 }
 
 function handleDownloadScript() {
