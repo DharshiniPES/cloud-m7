@@ -36,6 +36,7 @@
         <div class="flex items-center space-x-2">
           <span class="text-xl font-bold tracking-tight text-white">CLOUD-M7</span>
           <span class="px-2 py-0.5 text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full">Node.js High-Speed</span>
+          <span class="px-2 py-0.5 text-xs font-semibold bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-full">6 Advanced Tracks</span>
           <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> 60 FPS
           </span>
@@ -79,7 +80,7 @@
         <div id="stat-path-hops" class="text-lg font-bold text-red-400 mt-0.5">--</div>
       </div>
       <div class="glass-card p-2.5 rounded-lg border border-gray-800">
-        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Noise Pruned</div>
+        <div class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Noise Pruned (MDL)</div>
         <div id="stat-noise-pruned" class="text-lg font-bold text-emerald-400 mt-0.5">--</div>
       </div>
       <div class="glass-card p-2.5 rounded-lg border border-gray-800">
@@ -95,35 +96,57 @@
 
   <!-- NAVIGATION TABS -->
   <nav class="flex border-b border-gray-800 bg-gray-950 px-6 overflow-x-auto text-xs font-semibold tracking-wide">
-    <button class="nav-tab tab-active px-4 py-3 flex items-center space-x-2 cursor-pointer transition whitespace-nowrap" data-tab="tab-graph">
+    <button class="nav-tab tab-active px-3 py-3 flex items-center space-x-1.5 cursor-pointer transition whitespace-nowrap" data-tab="tab-graph">
       <i data-lucide="network" class="w-4 h-4"></i><span>1. Causal Graph</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-opensource">
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-opensource">
       <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i><span>2. Open-Source Stack</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-datasets">
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-datasets">
       <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i><span>3. Real Datasets</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-defense">
-      <i data-lucide="shield-check" class="w-4 h-4 text-red-400"></i><span>4. Attack Defense & Stopping</span>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-defense">
+      <i data-lucide="shield-check" class="w-4 h-4 text-red-400"></i><span>4. Active Defense</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-hardware">
-      <i data-lucide="cpu" class="w-4 h-4 text-rose-400"></i><span>5. Hardware Guide & Probe</span>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-hardware">
+      <i data-lucide="cpu" class="w-4 h-4 text-rose-400"></i><span>5. Hardware Guide</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty1">
-      <i data-lucide="git-fork" class="w-4 h-4 text-indigo-400"></i><span>6. Novelty 1 (Iterative)</span>
+
+    <!-- 6 ADVANCED CAPSTONE TRACKS -->
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-purple-400 hover:text-purple-300 cursor-pointer transition whitespace-nowrap" data-tab="tab-track1-ebpf">
+      <i data-lucide="activity" class="w-4 h-4 text-purple-400"></i><span>T1: eBPF & HPC</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty2">
-      <i data-lucide="target" class="w-4 h-4 text-yellow-400"></i><span>7. Novelty 2 (Choke Points)</span>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-indigo-400 hover:text-indigo-300 cursor-pointer transition whitespace-nowrap" data-tab="tab-track2-gnn">
+      <i data-lucide="share-2" class="w-4 h-4 text-indigo-400"></i><span>T2: T-GNN & Entropy</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty3">
-      <i data-lucide="git-commit" class="w-4 h-4 text-pink-400"></i><span>8. Novelty 3 (Causal Bridge)</span>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-emerald-400 hover:text-emerald-300 cursor-pointer transition whitespace-nowrap" data-tab="tab-track3-rl">
+      <i data-lucide="bot" class="w-4 h-4 text-emerald-400"></i><span>T3: RL Defense Agent</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty5">
-      <i data-lucide="compass" class="w-4 h-4 text-amber-400"></i><span>9. Novelty 5 (MITRE ATT&CK)</span>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 cursor-pointer transition whitespace-nowrap" data-tab="tab-track4-zk">
+      <i data-lucide="key" class="w-4 h-4 text-pink-400"></i><span>T4: ZK-SNARKs</span>
     </button>
-    <button class="nav-tab px-4 py-3 flex items-center space-x-2 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-sql">
-      <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i><span>10. Parquet + DuckDB SQL</span>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-amber-400 hover:text-amber-300 cursor-pointer transition whitespace-nowrap" data-tab="tab-track5-shield">
+      <i data-lucide="shield" class="w-4 h-4 text-amber-400"></i><span>T5: Evasion Shield</span>
+    </button>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-blue-400 hover:text-blue-300 cursor-pointer transition whitespace-nowrap" data-tab="tab-track6-stix">
+      <i data-lucide="radio" class="w-4 h-4 text-blue-400"></i><span>T6: STIX 2.1 & Stream</span>
+    </button>
+
+    <!-- NOVELTY & STORAGE TABS -->
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty1">
+      <i data-lucide="git-fork" class="w-4 h-4"></i><span>Novelty 1</span>
+    </button>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty2">
+      <i data-lucide="target" class="w-4 h-4"></i><span>Novelty 2</span>
+    </button>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty3">
+      <i data-lucide="git-commit" class="w-4 h-4"></i><span>Novelty 3</span>
+    </button>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-novelty5">
+      <i data-lucide="compass" class="w-4 h-4"></i><span>Novelty 5</span>
+    </button>
+    <button class="nav-tab px-3 py-3 flex items-center space-x-1.5 text-gray-400 hover:text-gray-200 cursor-pointer transition whitespace-nowrap" data-tab="tab-sql">
+      <i data-lucide="terminal" class="w-4 h-4"></i><span>DuckDB SQL</span>
     </button>
   </nav>
 
@@ -199,7 +222,6 @@
         </p>
       </div>
 
-      <!-- 3 Tier Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Edge Card -->
         <div class="glass-card p-4 rounded-xl border-t-4 border-emerald-500 space-y-3">
@@ -221,9 +243,6 @@
               <span class="font-bold text-white block">sysfs Telemetry Daemon</span>
               <span class="text-[11px] text-gray-400">Reads physical CPU thermal & hardware metrics from <code class="text-cyan-300">/sys/class/thermal</code>.</span>
             </div>
-          </div>
-          <div class="text-[11px] text-gray-400 italic bg-gray-950 p-2 rounded border border-gray-800">
-            <strong>Limitation without CLOUD-M7:</strong> Completely blind once an attacker moves packets across a Wi-Fi socket.
           </div>
         </div>
 
@@ -248,9 +267,6 @@
               <span class="text-[11px] text-gray-400">High-speed kernel firewall and driver-layer eBPF XDP packet discard filter.</span>
             </div>
           </div>
-          <div class="text-[11px] text-gray-400 italic bg-gray-950 p-2 rounded border border-gray-800">
-            <strong>Limitation without CLOUD-M7:</strong> Sees network traffic but cannot tell which process PID or user created it.
-          </div>
         </div>
 
         <!-- Cloud Card -->
@@ -274,20 +290,7 @@
               <span class="text-[11px] text-gray-400">Columnar storage with 87% compression and sub-2ms zero-server SQL querying.</span>
             </div>
           </div>
-          <div class="text-[11px] text-gray-400 italic bg-gray-950 p-2 rounded border border-gray-800">
-            <strong>Limitation without CLOUD-M7:</strong> Isolated in the datacenter, completely blind to physical edge origin points.
-          </div>
         </div>
-      </div>
-
-      <!-- Fusion Engine Banner -->
-      <div class="glass-card p-4 rounded-xl bg-gradient-to-r from-blue-950/40 via-indigo-950/40 to-purple-950/40 border border-blue-900/40">
-        <h4 class="text-xs font-bold uppercase tracking-wider text-blue-300 mb-1.5 flex items-center gap-2">
-          <i data-lucide="cpu" class="w-4 h-4 text-blue-400"></i> The CLOUD-M7 Unification Layer
-        </h4>
-        <p class="text-xs text-gray-300 leading-relaxed">
-          CLOUD-M7's <strong>DatasetNormalizerFactory</strong> and <strong>Cross-Tier Causal Fusion Engine</strong> ingest telemetry from all the above tools, converts each event into the mathematical tuple <code class="text-amber-300 font-mono">&E_i; = &lang;UUID, &tau;, Tier, Host, Type, Payload, Hash&rang;</code>, verifies cryptographic SHA-256 integrity, and synthesizes a single tamper-evident graph.
-        </p>
       </div>
     </div>
 
@@ -298,11 +301,10 @@
           <i data-lucide="database" class="w-5 h-5 text-emerald-400"></i> Real-World Security Benchmark Datasets
         </h3>
         <p class="text-xs text-gray-400 leading-relaxed">
-          CLOUD-M7 is evaluated on four authoritative cybersecurity benchmark datasets representing each computing layer. Click any card below to instantly load and analyze that dataset:
+          CLOUD-M7 is evaluated on four authoritative cybersecurity benchmark datasets representing each computing layer:
         </p>
       </div>
 
-      <!-- 4 Real Dataset Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <!-- DARPA OpTC -->
         <div class="glass-card p-4 rounded-xl border border-purple-900/40 hover:border-purple-500/60 transition space-y-2.5 flex flex-col justify-between">
@@ -312,11 +314,6 @@
               <span class="px-1.5 py-0.5 text-[10px] bg-purple-900/50 text-purple-300 rounded font-semibold">Cloud Tier</span>
             </div>
             <p class="text-[11px] text-gray-300">Operation Transparent Computing enterprise host audit logs in CAR JSONL format.</p>
-            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
-              <div><strong>Attacks:</strong> APT32, Lateral Pivoting</div>
-              <div><strong>Format:</strong> JSON Lines (.jsonl)</div>
-              <div><strong>Adapter:</strong> OptcAdapter</div>
-            </div>
           </div>
           <button class="btn-load-dataset w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="darpa_optc">
             <i data-lucide="play" class="w-3.5 h-3.5"></i> Load DARPA OpTC
@@ -331,11 +328,6 @@
               <span class="px-1.5 py-0.5 text-[10px] bg-amber-900/50 text-amber-300 rounded font-semibold">Fog Tier</span>
             </div>
             <p class="text-[11px] text-gray-300">Transparent Computing THEIA & Cadets BSD/Linux kernel CDM provenance logs.</p>
-            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
-              <div><strong>Attacks:</strong> BIND exploit, Root Backdoor</div>
-              <div><strong>Format:</strong> CDM JSON (.json)</div>
-              <div><strong>Adapter:</strong> TcAdapter</div>
-            </div>
           </div>
           <button class="btn-load-dataset w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="darpa_tc">
             <i data-lucide="play" class="w-3.5 h-3.5"></i> Load DARPA TC
@@ -350,11 +342,6 @@
               <span class="px-1.5 py-0.5 text-[10px] bg-emerald-900/50 text-emerald-300 rounded font-semibold">Edge Tier</span>
             </div>
             <p class="text-[11px] text-gray-300">UNSW Canberra Industrial IoT sensor telemetry and physical tamper dataset.</p>
-            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
-              <div><strong>Attacks:</strong> Modbus Injection, DoS, XSS</div>
-              <div><strong>Format:</strong> CSV Telemetry (.csv)</div>
-              <div><strong>Adapter:</strong> TonIotAdapter</div>
-            </div>
           </div>
           <button class="btn-load-dataset w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="ton_iot">
             <i data-lucide="play" class="w-3.5 h-3.5"></i> Load TON_IoT
@@ -369,11 +356,6 @@
               <span class="px-1.5 py-0.5 text-[10px] bg-red-900/50 text-red-300 rounded font-semibold">Edge/Fog Flow</span>
             </div>
             <p class="text-[11px] text-gray-300">Stratosphere Lab real malware traffic captured from infected physical IoT devices.</p>
-            <div class="mt-2 text-[10px] text-gray-400 font-mono space-y-1 bg-gray-950 p-2 rounded border border-gray-800">
-              <div><strong>Attacks:</strong> Mirai Botnet, Torii Malware</div>
-              <div><strong>Format:</strong> Zeek conn.log (TSV/CSV)</div>
-              <div><strong>Adapter:</strong> Iot23Adapter</div>
-            </div>
           </div>
           <button class="btn-load-dataset w-full bg-red-600 hover:bg-red-500 text-white text-xs font-semibold py-1.5 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer" data-dataset="iot23">
             <i data-lucide="play" class="w-3.5 h-3.5"></i> Load IoT-23
@@ -443,53 +425,8 @@
         </div>
       </div>
 
-      <!-- 3 Tier Defense Architecture Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Edge Defense -->
-        <div class="glass-card p-4 rounded-xl border border-gray-800 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-emerald-400 uppercase">1. Edge Defense</span>
-            <span class="text-[10px] font-mono text-gray-400">cgroup v2 freezer</span>
-          </div>
-          <p class="text-[11px] text-gray-300">Freezes the rogue process PID on the Raspberry Pi without rebooting or halting legitimate sensors.</p>
-          <div class="bg-gray-950 p-2.5 rounded font-mono text-[11px] text-emerald-300 border border-gray-800 break-all select-all">
-            echo 1 > /sys/fs/cgroup/pids/isolated/cgroup.freeze<br>
-            kill -9 &lt;PID&gt; && chmod 000 /usr/local/bin/tamper.sh
-          </div>
-        </div>
-
-        <!-- Fog Choke Point Defense (Highlight) -->
-        <div class="glass-card p-4 rounded-xl border-2 border-yellow-500/80 bg-yellow-950/10 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-yellow-300 uppercase flex items-center gap-1">
-              ★ 2. Fog Choke Point (Key Defense)
-            </span>
-            <span class="text-[10px] font-mono text-yellow-400">100% Path Sever</span>
-          </div>
-          <p class="text-[11px] text-gray-200">Cut-vertex containment severs all lateral attack traffic before it ever touches the Cloud database.</p>
-          <div class="bg-gray-950 p-2.5 rounded font-mono text-[11px] text-yellow-300 border border-yellow-800/60 break-all select-all">
-            iptables -I FORWARD 1 -s 192.168.1.101 -p tcp --dport 8080 -j DROP<br>
-            xdp-filter load --dev eth0 --ip 192.168.1.101
-          </div>
-        </div>
-
-        <!-- Cloud Defense -->
-        <div class="glass-card p-4 rounded-xl border border-gray-800 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-purple-400 uppercase">3. Cloud Defense</span>
-            <span class="text-[10px] font-mono text-gray-400">IAM & SG Quarantine</span>
-          </div>
-          <p class="text-[11px] text-gray-300">Revokes leaked AWS STS session tokens and locks down the cloud database Security Group to localhost.</p>
-          <div class="bg-gray-950 p-2.5 rounded font-mono text-[11px] text-purple-300 border border-gray-800 break-all select-all">
-            aws iam put-user-policy --user-name fog-sync --policy file://deny-all.json<br>
-            aws ec2 modify-security-group-rules ...
-          </div>
-        </div>
-      </div>
-
       <!-- Synthesized Policies & Executable Script Preview -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Policies Column -->
         <div class="glass-card p-4 rounded-xl">
           <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center justify-between">
             <span>Synthesized Containment Policies (RPS Ranked)</span>
@@ -498,7 +435,6 @@
           <div id="n4-policies-container" class="space-y-3 max-h-[400px] overflow-y-auto"></div>
         </div>
 
-        <!-- Executable Script Preview -->
         <div class="glass-card p-4 rounded-xl flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -531,80 +467,268 @@
         </div>
       </div>
 
-      <!-- Step-by-Step Hardware Guide Accordion / Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Step 1: Fog Gateway Setup -->
         <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-400 uppercase">Step 1: Start Fog Gateway (Laptop)</span>
-            <span class="text-[10px] font-mono text-gray-400">Port 8080</span>
-          </div>
-          <p class="text-[11px] text-gray-300">Run this on your central laptop connected to the same Wi-Fi subnet (e.g. <code class="text-amber-300">192.168.1.50</code>):</p>
+          <span class="text-xs font-bold text-amber-400 uppercase">Step 1: Start Fog Gateway (Laptop)</span>
           <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-amber-300 border border-gray-800 overflow-x-auto select-all">python -c "from cloud_m7.hardware.fog_receiver import FogHardwareGatewayServer; s = FogHardwareGatewayServer(port=8080); s.start_background(); import time; time.sleep(86400)"</pre>
         </div>
-
-        <!-- Step 2: Raspberry Pi Probe Deployment -->
         <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-emerald-400 uppercase">Step 2: Deploy Edge Probe (Raspberry Pi)</span>
-            <span class="text-[10px] font-mono text-gray-400">Raspberry Pi OS</span>
-          </div>
-          <p class="text-[11px] text-gray-300">Copy the probe to the Raspberry Pi and launch continuous thermal telemetry streaming:</p>
+          <span class="text-xs font-bold text-emerald-400 uppercase">Step 2: Deploy Edge Probe (Raspberry Pi)</span>
           <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-emerald-300 border border-gray-800 overflow-x-auto select-all">scp cloud_m7/hardware/edge_probe.py pi@192.168.1.101:~/
-ssh pi@192.168.1.101
 python3 edge_probe.py --fog-url http://192.168.1.50:8080/telemetry --interval 2.0</pre>
-        </div>
-
-        <!-- Step 3: Attack Injection on Pi -->
-        <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-red-400 uppercase">Step 3: Inject Attack on Raspberry Pi</span>
-            <span class="text-[10px] font-mono text-gray-400">Firmware Tamper</span>
-          </div>
-          <p class="text-[11px] text-gray-300">In a second terminal on the Pi, simulate an unauthorized firmware injection attempt:</p>
-          <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-red-300 border border-gray-800 overflow-x-auto select-all">python3 -c "from edge_probe import generate_hardware_event, transmit_telemetry; e = generate_hardware_event(event_type='Process', action='exec', entity='/usr/local/bin/tamper_firmware.sh', is_attack=True); transmit_telemetry('http://192.168.1.50:8080/telemetry', [e])"</pre>
-        </div>
-
-        <!-- Step 4: Docker Single-Machine Emulation -->
-        <div class="glass-card p-4 rounded-xl space-y-2 border border-gray-800">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-cyan-400 uppercase">Zero-Cost Fallback: Docker Emulation</span>
-            <span class="text-[10px] font-mono text-gray-400">Single Machine</span>
-          </div>
-          <p class="text-[11px] text-gray-300">If physical Raspberry Pi boards are not available in the lab, run the complete 3-tier topology:</p>
-          <pre class="text-[11px] bg-gray-950 p-2.5 rounded text-cyan-300 border border-gray-800 overflow-x-auto select-all">docker-compose -f docker-compose.hardware-testbed.yml up --build</pre>
         </div>
       </div>
 
       <!-- Live Telemetry Stream Container -->
       <div class="glass-card p-4 rounded-xl">
         <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center justify-between">
-          <span>Live Hardware Telemetry Stream (Raspberry Pi CPU & Process Readings)</span>
+          <span>Live Hardware Telemetry Stream</span>
           <span class="text-[10px] text-gray-500 font-mono">HMAC-SHA256 Authenticated</span>
         </h4>
         <div id="hardware-events-container" class="space-y-2.5 max-h-[400px] overflow-y-auto">
           <div class="p-3 bg-gray-900/60 rounded-lg text-xs text-gray-400">
-            Click "Trigger Live Hardware Telemetry Cycle" above to interrogate physical / simulated Raspberry Pi CPU temperature sensors.
+            Click "Trigger Live Hardware Telemetry Cycle" above to interrogate physical Raspberry Pi CPU sensors.
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 6: NOVELTY 1: ITERATIVE MULTI-ROOT DISCOVERY -->
+    <!-- ===================================================================== -->
+    <!-- 6 ADVANCED CAPSTONE TRACK TABS                                        -->
+    <!-- ===================================================================== -->
+
+    <!-- ADVANCED TRACK 1: IN-KERNEL eBPF & MICROARCHITECTURAL HPC -->
+    <div id="tab-track1-ebpf" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl border-l-4 border-purple-500">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="activity" class="w-5 h-5 text-purple-400"></i> Track 1: In-Kernel eBPF LSM Hooks & Microarchitectural Hardware Auditing
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Hooks directly into Linux Security Modules (LSM) via kernel ring buffers and reads CPU Performance Monitoring Units (PMU / perf_event_open) to catch memory-corruption rootkits that evade user-space audit logs.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- eBPF Ring Buffer -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <span class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="cpu" class="w-4 h-4"></i> Kernel eBPF LSM Probe
+          </span>
+          <div id="ebpf-probe-card" class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-1.5 text-xs font-mono">
+            Loading eBPF kernel telemetry...
+          </div>
+        </div>
+
+        <!-- HPC Registers -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <span class="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="gauge" class="w-4 h-4"></i> Hardware Performance Counters (HPC)
+          </span>
+          <div id="hpc-registers-card" class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-1.5 text-xs font-mono">
+            Loading microarchitectural PMU registers...
+          </div>
+        </div>
+
+        <!-- TPM 2.0 PCR Attestation -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="key" class="w-4 h-4"></i> TPM 2.0 PCR[10] Hardware Attestation
+          </span>
+          <div id="tpm-quote-card" class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-1.5 text-xs font-mono">
+            Loading TPM 2.0 cryptographic quotes...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED TRACK 2: T-GNN & ENTROPY PRUNING -->
+    <div id="tab-track2-gnn" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl border-l-4 border-indigo-500">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="share-2" class="w-5 h-5 text-indigo-400"></i> Track 2: Shannon Entropy Graph Pruning & Temporal GNN Anomaly Scorer
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Solves the classic <strong>Dependency Explosion Problem</strong> using Information-Theoretic Entropy pruning:
+          <code class="text-indigo-300 font-semibold">H(e) = -&sum; p(a) &middot; log_2 p(a)</code>, and scores topological zero-day anomalies using a 2-hop message-passing Temporal Graph Convolutional Network.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dependency Explosion Reduction Summary -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Dependency Explosion Pruning Benchmark</h4>
+          <div id="entropy-stats-card" class="space-y-2 text-xs"></div>
+        </div>
+
+        <!-- T-GNN Anomaly Table -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Topological Zero-Day Anomaly Rankings (T-GNN)</h4>
+          <div class="overflow-x-auto max-h-[350px]">
+            <table class="w-full text-xs text-left text-gray-300">
+              <thead class="bg-gray-900/80 text-gray-400 uppercase font-semibold">
+                <tr>
+                  <th class="py-2 px-2.5">Node ID</th>
+                  <th class="py-2 px-2.5">Tier</th>
+                  <th class="py-2 px-2.5">Anomaly Score</th>
+                  <th class="py-2 px-2.5">Embedding Norm</th>
+                  <th class="py-2 px-2.5">Outlier Status</th>
+                </tr>
+              </thead>
+              <tbody id="gnn-anomalies-body" class="divide-y divide-gray-800 font-mono"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED TRACK 3: AUTONOMOUS RL CONTAINMENT ARENA -->
+    <div id="tab-track3-rl" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl border-l-4 border-emerald-500">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="bot" class="w-5 h-5 text-emerald-400"></i> Track 3: Autonomous Reinforcement Learning Defense Agent (MDP Q-Learning)
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Trained on a Markov Decision Process balancing containment speed against collateral business downtime:
+          <code class="text-emerald-300 font-semibold">R = +100 &middot; CE - 50 &middot; CDI - 10 &middot; Cost</code>.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Learned Optimal Policy -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Learned Optimal State-Action Policy</h4>
+          <div id="rl-policy-container" class="space-y-2 text-xs"></div>
+        </div>
+
+        <!-- Simulation Trajectory -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Simulation Containment Trajectory</h4>
+          <div class="overflow-x-auto max-h-[350px]">
+            <table class="w-full text-xs text-left text-gray-300">
+              <thead class="bg-gray-900/80 text-gray-400 uppercase font-semibold">
+                <tr>
+                  <th class="py-2 px-2.5">Current State</th>
+                  <th class="py-2 px-2.5">Chosen Action</th>
+                  <th class="py-2 px-2.5">Reward</th>
+                  <th class="py-2 px-2.5">Next State</th>
+                </tr>
+              </thead>
+              <tbody id="rl-trajectory-body" class="divide-y divide-gray-800 text-[11px]"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED TRACK 4: ZERO-KNOWLEDGE SNARK PROOFS -->
+    <div id="tab-track4-zk" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl border-l-4 border-pink-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
+              <i data-lucide="key" class="w-5 h-5 text-pink-400"></i> Track 4: Zero-Knowledge Provenance Verification (ZK-SNARK Circuit)
+            </h3>
+            <p class="text-xs text-gray-400">
+              Enables privacy-preserving enterprise auditing. Proves attack trajectory validity and choke-point isolation in zero-knowledge without leaking plaintext IPs, PIDs, or private sensor payloads.
+            </p>
+          </div>
+          <span class="px-3 py-1 bg-pink-500/20 text-pink-300 border border-pink-500/30 rounded-full text-xs font-bold font-mono">
+            BN254 Elliptic Curve
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- ZK Public Signals -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Public Commitment Signals (Auditor-Visible)</h4>
+          <div id="zk-public-signals" class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-2 text-xs font-mono"></div>
+        </div>
+
+        <!-- Groth16 Proof Vectors -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Groth16 Verification Status & Proof Elements</h4>
+          <div id="zk-proof-elements" class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-2 text-xs font-mono"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED TRACK 5: ADVERSARIAL EVASION SHIELD -->
+    <div id="tab-track5-shield" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl border-l-4 border-amber-500">
+        <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
+          <i data-lucide="shield" class="w-5 h-5 text-amber-400"></i> Track 5: Adversarial Provenance Camouflage & Anti-Forensics Invariant Shield
+        </h3>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Simulates active Red-Team evasion attacks (Graph Inflation, NTP Clock Spoofing, Causal Dependency Camouflage) and enforces 4 physical invariants to guarantee uncompromised forensic reconstruction.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Physical Invariants List -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Enforced Physical Invariants</h4>
+          <div id="shield-invariants-container" class="space-y-2 text-xs"></div>
+        </div>
+
+        <!-- Neutralization Metrics -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Red-Team Evasion Neutralization Metrics</h4>
+          <div id="shield-metrics-container" class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-2 text-xs font-mono"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED TRACK 6: STIX 2.1 THREAT INTEL & STREAMING -->
+    <div id="tab-track6-stix" class="tab-pane hidden space-y-4">
+      <div class="glass-card p-5 rounded-xl border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1">
+              <i data-lucide="radio" class="w-5 h-5 text-blue-400"></i> Track 6: OASIS STIX 2.1 Threat Intel Export & Event-Time Stream Processor
+            </h3>
+            <p class="text-xs text-gray-400">
+              Standardized enterprise threat intelligence export to Splunk/Wazuh + high-throughput streaming benchmark (50,000+ events/sec) with event-time watermarking.
+            </p>
+          </div>
+          <button id="btn-download-stix" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-600/20">
+            <i data-lucide="download" class="w-4 h-4"></i> Download STIX 2.1 Bundle (.json)
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- STIX 2.1 JSON Package Viewer -->
+        <div class="glass-card p-4 rounded-xl flex flex-col justify-between">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-2">Standardized STIX 2.1 JSON Bundle Preview</h4>
+          <pre id="stix-json-preview" class="text-[11px] text-cyan-300 bg-gray-950 p-3 rounded-lg border border-gray-800 overflow-x-auto max-h-[380px]"></pre>
+        </div>
+
+        <!-- High-Throughput Stream Ingestion Metrics -->
+        <div class="glass-card p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300">Distributed Event-Time Streaming Ingestion</h4>
+          <div id="streaming-metrics-container" class="bg-gray-950 p-3 rounded-lg border border-gray-800 space-y-2 text-xs font-mono"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- PRE-EXISTING NOVELTIES & SQL TABS                                     -->
+    <!-- ===================================================================== -->
+
+    <!-- NOVELTY 1 -->
     <div id="tab-novelty1" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
           <i data-lucide="git-fork" class="w-5 h-5 text-indigo-400"></i> Novelty 1: Hyperparameter-Tuned Iterative Multi-Root Discovery
         </h3>
         <p class="text-xs text-gray-400 leading-relaxed">
-          Standard single-pass forensic systems terminate at the first root cause, leaving stealthy secondary entry points undetected.
-          CLOUD-M7 executes an iterative backward traversal loop:
+          Standard single-pass forensic systems terminate at the first root cause. CLOUD-M7 executes an iterative backward traversal loop:
           <code class="text-amber-300 font-semibold">&Delta;I_k = Impact(R_k) &middot; e^(-&lambda; &middot; k) &ge; &epsilon;</code>
         </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Iteration History Table -->
         <div class="glass-card p-4 rounded-xl">
           <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Iteration History & Convergence</h4>
           <table class="w-full text-xs text-left text-gray-300">
@@ -621,7 +745,6 @@ python3 edge_probe.py --fog-url http://192.168.1.50:8080/telemetry --interval 2.
           </table>
         </div>
 
-        <!-- Discovered Vectors -->
         <div class="glass-card p-4 rounded-xl">
           <h4 class="text-xs font-bold uppercase tracking-wider text-gray-300 mb-3">Discovered Multi-Root Attack Entry Vectors</h4>
           <div id="n1-vectors-container" class="space-y-2.5 max-h-[350px] overflow-y-auto"></div>
@@ -629,15 +752,14 @@ python3 edge_probe.py --fog-url http://192.168.1.50:8080/telemetry --interval 2.
       </div>
     </div>
 
-    <!-- TAB 7: NOVELTY 2: CHOKE POINTS -->
+    <!-- NOVELTY 2 -->
     <div id="tab-novelty2" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
           <i data-lucide="target" class="w-5 h-5 text-yellow-400"></i> Novelty 2: Interconnected Multi-Sensor Graph & Articulation Choke Points
         </h3>
         <p class="text-xs text-gray-400 leading-relaxed">
-          Adversaries breach multiple edge sensors that converge toward cloud targets. Graph cut-vertex theory identifies the single articulation point whose containment severs 100% of attack paths:
-          <code class="text-amber-300 font-semibold">E_cut(v) = |{p &isin; P_multi | v &isin; p}| / |P_multi|</code>
+          Adversaries breach multiple edge sensors that converge toward cloud targets. Graph cut-vertex theory identifies the single articulation point whose containment severs 100% of attack paths.
         </p>
       </div>
 
@@ -662,15 +784,14 @@ python3 edge_probe.py --fog-url http://192.168.1.50:8080/telemetry --interval 2.
       </div>
     </div>
 
-    <!-- TAB 8: NOVELTY 3: CAUSAL BRIDGE IMPUTATION -->
+    <!-- NOVELTY 3 -->
     <div id="tab-novelty3" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
           <i data-lucide="git-commit" class="w-5 h-5 text-pink-400"></i> Novelty 3: Causal Bridge Imputation under Lossy Network Conditions
         </h3>
         <p class="text-xs text-gray-400 leading-relaxed">
-          When wireless IoT networks drop packets, traditional graph tracing hits a dead end. CLOUD-M7 uses Bayesian confidence scoring to infer and heal missing hops:
-          <code class="text-pink-300 font-semibold">P(bridge(u, v)) = &alpha; &middot; e^(-|&tau;_v - &tau;_u| / &sigma;_t) + &beta; &middot; Sim_endpoint + &gamma; &middot; Sim_lineage &ge; &theta;</code>
+          When wireless IoT networks drop packets, traditional graph tracing hits a dead end. CLOUD-M7 uses Bayesian confidence scoring to infer and heal missing hops.
         </p>
       </div>
 
@@ -694,7 +815,7 @@ python3 edge_probe.py --fog-url http://192.168.1.50:8080/telemetry --interval 2.
       </div>
     </div>
 
-    <!-- TAB 9: NOVELTY 5: MITRE ATT&CK MATRIX -->
+    <!-- NOVELTY 5 -->
     <div id="tab-novelty5" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
@@ -725,7 +846,7 @@ python3 edge_probe.py --fog-url http://192.168.1.50:8080/telemetry --interval 2.
       </div>
     </div>
 
-    <!-- TAB 10: PARQUET + DUCKDB SQL -->
+    <!-- DUCKDB SQL TAB -->
     <div id="tab-sql" class="tab-pane hidden space-y-4">
       <div class="glass-card p-5 rounded-xl">
         <h3 class="text-base font-bold text-white flex items-center gap-2 mb-1.5">
