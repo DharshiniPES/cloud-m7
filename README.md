@@ -8,8 +8,9 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js v18+](https://img.shields.io/badge/node.js-v18+-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests: 26/26 Passed](https://img.shields.io/badge/pytest-26%20passed%20(100%25)-brightgreen.svg)]()
+[![Tests: 32/32 Passed](https://img.shields.io/badge/pytest-32%20passed%20(100%25)-brightgreen.svg)]()
 [![Dashboard: Express + Vis.js 60FPS](https://img.shields.io/badge/dashboard-Node.js%2060FPS-blueviolet.svg)]()
+[![Tracks: 6 Advanced Systems Tracks](https://img.shields.io/badge/architecture-6%20Advanced%20Tracks-purple.svg)]()
 [![Datasets: DARPA + TON_IoT + IoT23](https://img.shields.io/badge/datasets-4%20Real%20Benchmarks-orange.svg)]()
 
 ---
