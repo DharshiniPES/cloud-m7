@@ -125,12 +125,17 @@ app.post('/api/upload', upload.single('dataset_file'), async (req, res) => {
 // 4. Zero-Server SQL Execution via DuckDB
 app.post('/api/sql', async (req, res) => {
   const query = req.body.query;
+  const datasetId = req.body.dataset_id || req.query.dataset_id || '';
   if (!query) {
     return res.status(400).json({ status: 'error', message: 'Missing SQL query.' });
   }
 
   try {
-    const result = await runPythonBridge(['--action', 'sql', '--query', query]);
+    const args = ['--action', 'sql', '--query', query];
+    if (datasetId) {
+      args.push('--dataset-id', datasetId);
+    }
+    const result = await runPythonBridge(args);
     res.json(result);
   } catch (err) {
     res.status(500).json({ status: 'error', message: err.message });

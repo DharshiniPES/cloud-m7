@@ -1,12 +1,17 @@
 """
 High-Performance Python-to-Node.js JSON Bridge for CLOUD-M7 Dashboard.
-Runs full graph analytics, the 5 novelties, dataset normalization, and SQL queries,
-outputting clean JSON for the Node.js Express server.
+Integrates:
+- 5 Original Research Novelties
+- 6 Advanced Defense-Grade Capabilities (eBPF/HPC, T-GNN/Entropy, RL-Containment, ZK-SNARKs, Evasion Shield, STIX 2.1)
+- Review 2 Conservative Reduction (Fold Repeated Reads) & Scoped Dataset Parquet/DuckDB
+- 4 Real-World Benchmark Adapters + 3 Controlled Demo Fixtures
 """
 
 import argparse
+import hashlib
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -17,13 +22,14 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from cloud_m7.adapters.canonical import DatasetValidationError
 from cloud_m7.adapters.factory import DatasetNormalizerFactory
+from cloud_m7.advanced.adversarial_shield import AdversarialCamouflageSuite, ProvenanceInvariantShield
 from cloud_m7.advanced.ebpf_hpc import EbpfHpcTelemetryEngine
 from cloud_m7.advanced.gnn_entropy import EntropyGraphPruner, TemporalGnnAnomalyScorer
 from cloud_m7.advanced.rl_containment import AutonomousRlContainmentAgent
+from cloud_m7.advanced.stix_stream import EventTimeStreamingEngine, StixThreatIntelGenerator
 from cloud_m7.advanced.zk_provenance import ZkProvenanceVerifier
-from cloud_m7.advanced.adversarial_shield import AdversarialCamouflageSuite, ProvenanceInvariantShield
-from cloud_m7.advanced.stix_stream import StixThreatIntelGenerator, EventTimeStreamingEngine
 from cloud_m7.fusion.active_remediation import ActiveChokePointRemediator
 from cloud_m7.fusion.attack_path import AttackPathReconstructor
 from cloud_m7.fusion.causal_bridge import CausalBridgeImputer
@@ -31,46 +37,69 @@ from cloud_m7.fusion.causal_graph import ProvenanceGraphEngine
 from cloud_m7.fusion.interconnected_paths import InterconnectedAttackPathEngine
 from cloud_m7.fusion.iterative_discovery import IterativeAttackDiscoveryEngine
 from cloud_m7.fusion.mitre_mapper import MitreAttackMapper
+from cloud_m7.fusion.reduction import fold_repeated_reads
 from cloud_m7.hardware.edge_probe import generate_hardware_event
+from cloud_m7.placement.demo import placement_comparison
 from cloud_m7.schema.event import ProvenanceEvent
 from cloud_m7.schema.types import TierType
-from cloud_m7.simulator.attack_scenario import MultiTierAttackSimulator
 from cloud_m7.storage.parquet_engine import ProvenanceStorageEngine
+
+DEMO_DIR = ROOT_DIR / "data" / "demo"
+RAW_DIR = ROOT_DIR / "data" / "raw"
+BUNDLED = {"synthetic": "attack", "attack": "attack", "normal": "normal", "repeated": "repeated"}
 
 
 def load_dataset_events(dataset_id: str) -> tuple[List[ProvenanceEvent], str]:
-    """Loads events based on dataset identifier or raw file path."""
+    """Loads events based on dataset identifier, demo fixture, or raw file path."""
     factory = DatasetNormalizerFactory()
 
-    if dataset_id == "synthetic":
-        sim = MultiTierAttackSimulator()
-        events = sim.generate_full_simulation_dataset(benign_count=36, include_multi_vector=True)
-        return events, "Synthetic_MultiTier_GroundTruth"
+    if dataset_id in BUNDLED:
+        json_path = DEMO_DIR / f"{BUNDLED[dataset_id]}.json"
+        if json_path.is_file():
+            return factory.normalize(str(json_path))
     elif dataset_id == "darpa_optc":
-        path = ROOT_DIR / "data" / "raw" / "sample_darpa_optc.jsonl"
+        path = RAW_DIR / "sample_darpa_optc.jsonl"
         return factory.normalize(str(path), adapter_name="DARPA_OpTC")
     elif dataset_id == "darpa_tc":
-        path = ROOT_DIR / "data" / "raw" / "sample_darpa_tc.json"
+        path = RAW_DIR / "sample_darpa_tc.json"
         return factory.normalize(str(path), adapter_name="DARPA_TC")
     elif dataset_id == "ton_iot":
-        path = ROOT_DIR / "data" / "raw" / "sample_ton_iot.csv"
+        path = RAW_DIR / "sample_ton_iot.csv"
         return factory.normalize(str(path), adapter_name="TON_IoT")
     elif dataset_id == "iot23":
-        path = ROOT_DIR / "data" / "raw" / "sample_iot23.csv"
+        path = RAW_DIR / "sample_iot23.csv"
         return factory.normalize(str(path), adapter_name="IoT_23")
-    elif os.path.exists(dataset_id):
+    elif re.fullmatch(r"ds-[0-9a-f]{64}", dataset_id):
+        path = ROOT_DIR / "data" / "processed" / "datasets" / f"{dataset_id}.json"
+        if path.is_file():
+            return factory.normalize(str(path))
+        raise DatasetValidationError([f"Stored dataset not found: {dataset_id}"])
+    elif os.path.isfile(dataset_id):
         return factory.normalize(dataset_id)
-    else:
-        # Default fallback
-        sim = MultiTierAttackSimulator()
-        events = sim.generate_full_simulation_dataset()
-        return events, "Synthetic_Default"
+
+    raise DatasetValidationError([f"Dataset not found: {dataset_id}"])
 
 
 def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
-    """Executes full multi-tier analysis across all 5 novelties and storage layer."""
+    """Executes full multi-tier analysis across novelties, tracks, reduction, and storage."""
     t0 = time.time()
-    events, detected_fmt = load_dataset_events(dataset_id)
+    requested_dataset = dataset_id
+    events, detected_fmt = load_dataset_events(requested_dataset)
+    if len(events) > 2000:
+        raise DatasetValidationError(["This laptop demo supports at most 2000 events per dataset"])
+
+    events = sorted(events, key=lambda e: (e.timestamp, e.uuid))
+    canonical_str = json.dumps([e.to_dict() for e in events], sort_keys=True, separators=(",", ":"))
+    ds_hash = hashlib.sha256(canonical_str.encode()).hexdigest()
+    computed_dataset_id = "ds-" + ds_hash
+
+    provenance = {
+        "kind": "controlled_synthetic" if requested_dataset in BUNDLED else "user_supplied",
+        "source": f"data/demo/{BUNDLED[requested_dataset]}.json" if requested_dataset in BUNDLED else os.path.basename(requested_dataset),
+        "description": "Controlled synthetic ground truth; not a real attack capture" if requested_dataset in BUNDLED else "User-supplied file; source claims have not been independently verified",
+        "labels": "is_attack values are supplied labels; this demonstration reconstructs evidence, not unseen-attack detection",
+        "sha256": ds_hash,
+    }
 
     # 1. Graph Synthesis
     engine = ProvenanceGraphEngine(time_window_seconds=15.0)
@@ -97,6 +126,12 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
                 "entity": s.entity,
                 "description": s.description,
             })
+
+    # Review 2: Conservative Node Folding (Repeated Reads Reduction)
+    reduction = fold_repeated_reads(
+        global_dag,
+        protected_nodes=[recon_res.source_root_uuid, recon_res.target_impact_uuid] if recon_res else [],
+    )
 
     # 3. Novelty 1: Iterative Multi-Root Discovery
     iter_engine = IterativeAttackDiscoveryEngine(
@@ -190,7 +225,11 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
         })
 
     # 7. Novelty 5: MITRE ATT&CK Matrix Mapping
-    attack_subg = intercon_res.induced_attack_subgraph if intercon_res.induced_attack_subgraph.number_of_nodes() > 0 else global_dag
+    attack_subg = (
+        intercon_res.induced_attack_subgraph
+        if intercon_res.induced_attack_subgraph.number_of_nodes() > 0
+        else global_dag
+    )
     mapper = MitreAttackMapper()
     mitre_report = mapper.map_attack_graph(attack_subg)
 
@@ -208,66 +247,84 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
             "reasoning": m.reasoning,
         })
 
-    # 8. Parquet + DuckDB Storage Layer Benchmark
+    # 8. Parquet + DuckDB Storage Layer Benchmark (Dataset-Scoped)
     storage = ProvenanceStorageEngine()
-    data_dir = ROOT_DIR / "data" / "processed"
-    os.makedirs(str(data_dir), exist_ok=True)
-    parquet_path = str(data_dir / "provenance_events.parquet")
-    json_path = str(data_dir / "provenance_events.json")
+    datasets_dir = ROOT_DIR / "data" / "processed" / "datasets"
+    datasets_dir.mkdir(parents=True, exist_ok=True)
+    parquet_path = str(datasets_dir / f"{computed_dataset_id}.parquet")
+    json_path = str(datasets_dir / f"{computed_dataset_id}.json")
     bench = storage.benchmark_compression(events, parquet_path, json_path)
 
-    # 9. Graph representation for Frontend Vis-Network (Canvas)
-    vis_nodes = []
+    # 9. Vis-Network Graph Representations (Full & Reduced)
     tier_colors = {"Edge": "#10B981", "Fog": "#F59E0B", "Cloud": "#8B5CF6"}
 
-    for n, d in global_dag.nodes(data=True):
-        tier = d.get("tier", "Edge")
-        is_attack = d.get("is_attack", False) or (n in attack_node_set)
-        action = str(d.get("action", d.get("event_type", "event")))
-        host = str(d.get("host_id", ""))
-        entity = str(d.get("entity", ""))
+    def build_vis_graph(target_graph: Any) -> Dict[str, Any]:
+        nodes = []
+        for n, d in target_graph.nodes(data=True):
+            tier = d.get("tier", "Edge")
+            is_attack = d.get("is_attack", False) or (n in attack_node_set)
+            action = str(d.get("action", d.get("event_type", "event")))
+            host = str(d.get("host_id", ""))
+            entity = str(d.get("entity", ""))
+            folded = d.get("folded_count", 1)
 
-        is_choke = n in choke_node_ids
-        color = "#EF4444" if is_attack else tier_colors.get(tier, "#94A3B8")
-        if is_choke:
-            color = "#EAB308"
+            is_choke = n in choke_node_ids
+            color = "#EF4444" if is_attack else tier_colors.get(tier, "#94A3B8")
+            if is_choke:
+                color = "#EAB308"
+            if folded > 1:
+                color = "#06B6D4"
 
-        label = f"[{tier}]\n{action}\n({host})"
-        if is_choke:
-            label = f"★ CHOKE ★\n{action}\n({host})"
+            label = f"[{tier}]\n{action}\n({host})"
+            if is_choke:
+                label = f"★ CHOKE ★\n{action}\n({host})"
+            if folded > 1:
+                label = f"📦 {folded} Reads\n{action}\n({host})"
 
-        vis_nodes.append({
-            "id": n,
-            "label": label,
-            "tier": tier,
-            "host": host,
-            "action": action,
-            "entity": entity,
-            "is_attack": is_attack,
-            "is_choke": is_choke,
-            "color": color,
-            "size": 26 if is_choke else (22 if is_attack else 15),
-            "title": f"UUID: {n}<br>Tier: {tier}<br>Host: {host}<br>Action: {action}<br>Entity: {entity}<br>Attack: {is_attack}",
-        })
+            nodes.append({
+                "id": n,
+                "label": label,
+                "tier": tier,
+                "host": host,
+                "action": action,
+                "entity": entity,
+                "is_attack": is_attack,
+                "is_choke": is_choke,
+                "folded_count": folded,
+                "color": color,
+                "size": 28 if is_choke else (24 if is_attack else (20 if folded > 1 else 15)),
+                "title": f"UUID: {n}<br>Tier: {tier}<br>Host: {host}<br>Action: {action}<br>Entity: {entity}",
+            })
 
-    vis_edges = []
-    for u, v, d in global_dag.edges(data=True):
-        rel = d.get("relation", "FLOW")
-        is_imputed = d.get("imputed", False)
-        edge_color = "#EC4899" if is_imputed else ("#EF4444" if (u in attack_node_set and v in attack_node_set) else "#3B82F6")
-        vis_edges.append({
-            "from": u,
-            "to": v,
-            "label": f"imputed ({d.get('confidence', 0.8)*100:.0f}%)" if is_imputed else "",
-            "color": edge_color,
-            "dashes": is_imputed,
-            "title": rel,
-        })
+        edges = []
+        for u, v, d in target_graph.edges(data=True):
+            rel = d.get("relation", "FLOW")
+            is_imputed = d.get("imputed", False)
+            edge_color = (
+                "#EC4899"
+                if is_imputed
+                else ("#EF4444" if (u in attack_node_set and v in attack_node_set) else "#3B82F6")
+            )
+            edges.append({
+                "from": u,
+                "to": v,
+                "label": f"imputed ({d.get('confidence', 0.8)*100:.0f}%)" if is_imputed else "",
+                "color": edge_color,
+                "dashes": is_imputed,
+                "title": rel,
+            })
+        return {"nodes": nodes, "edges": edges}
 
-    # Normalized events sample preview (first 50)
-    events_preview = []
-    for e in events[:50]:
-        events_preview.append({
+    vis_full = build_vis_graph(global_dag)
+    vis_reduced = build_vis_graph(reduction.graph)
+
+    # Folded evidence mapping for review 2
+    folded_evidence = {k: v for k, v in reduction.membership.items() if len(v) > 1}
+
+    # Normalized events list (full and preview)
+    events_full = [e.to_dict() for e in events]
+    events_preview = [
+        {
             "uuid": e.uuid,
             "timestamp": round(e.timestamp, 3),
             "tier": e.tier.value if isinstance(e.tier, TierType) else str(e.tier),
@@ -277,15 +334,19 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
             "entity": str(e.payload.get("entity", ""))[:40],
             "is_attack": bool(e.payload.get("is_attack", False)),
             "tamper_hash": e.tamper_hash[:16] + "..." if e.tamper_hash else "None",
-        })
+        }
+        for e in events[:50]
+    ]
 
     total_time_ms = round((time.time() - t0) * 1000, 2)
 
     return {
         "status": "success",
-        "dataset_name": dataset_id,
+        "dataset_id": computed_dataset_id,
+        "dataset_name": requested_dataset,
         "detected_format": detected_fmt,
         "processing_time_ms": total_time_ms,
+        "provenance": provenance,
         "summary": {
             "total_events": len(events),
             "total_nodes": summary_stats.get("total_nodes", len(events)),
@@ -296,11 +357,13 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
             "noise_reduction_pct": recon_res.reduction_percentage if recon_res else 0.0,
             "attack_events_count": sum(1 for e in events if e.payload.get("is_attack")),
         },
+        "events": events_full,
         "events_preview": events_preview,
-        "graph": {
-            "nodes": vis_nodes,
-            "edges": vis_edges,
-        },
+        "folded_evidence": folded_evidence,
+        "reduction": reduction.metrics,
+        "placement": placement_comparison(),
+        "graph": vis_full,
+        "reduced_graph": vis_reduced,
         "reconstructed_timeline": reconstructed_steps,
         "novelty1_iterative": {
             "total_iterations": iter_res.total_iterations_run,
@@ -340,7 +403,7 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
             "parquet_file_path": parquet_path,
         },
         # -------------------------------------------------------------
-        # 6 ADVANCED CAPSTONE TRACKS
+        # 6 ADVANCED DEFENSE-GRADE CAPABILITY TRACKS
         # -------------------------------------------------------------
         "track1_ebpf_hpc": EbpfHpcTelemetryEngine().get_full_telemetry_snapshot(
             is_attack_scenario=len(attack_node_set) > 0
@@ -388,9 +451,12 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
             "status": "INVARIANT_SHIELD_ACTIVE",
         },
         "track6_stix_streaming": {
-            "stix_bundle": json.loads(StixThreatIntelGenerator().generate_stix_bundle(
-                reconstructed_steps, choke_point_node=list(choke_node_ids)[0] if choke_node_ids else "fog-gateway-01"
-            ).stix_json_string),
+            "stix_bundle": json.loads(
+                StixThreatIntelGenerator().generate_stix_bundle(
+                    reconstructed_steps,
+                    choke_point_node=list(choke_node_ids)[0] if choke_node_ids else "fog-gateway-01",
+                ).stix_json_string
+            ),
             "streaming_metrics": {
                 "events_ingested": 50000,
                 "throughput_events_per_sec": EventTimeStreamingEngine().benchmark_stream_ingestion(50000).throughput_events_per_sec,
@@ -401,26 +467,37 @@ def analyze_dataset(dataset_id: str) -> Dict[str, Any]:
     }
 
 
-def execute_sql(sql_query: str) -> Dict[str, Any]:
-    """Runs a live SQL query on the Parquet file via DuckDB."""
-    storage = ProvenanceStorageEngine()
-    parquet_path = str(ROOT_DIR / "data" / "processed" / "provenance_events.parquet")
-    if not os.path.exists(parquet_path):
-        return {"status": "error", "message": "Parquet database not initialized yet. Load a dataset first."}
+def execute_sql(sql_query: str, dataset_id: str = "") -> Dict[str, Any]:
+    """Query exactly the dataset selected in the UI; never a global last-written file."""
+    if not re.fullmatch(r"ds-[0-9a-f]{64}", dataset_id):
+        return {"status": "error", "message": "A valid selected dataset_id is required"}
+    parquet_path = ROOT_DIR / "data" / "processed" / "datasets" / f"{dataset_id}.parquet"
+    if not parquet_path.is_file():
+        return {"status": "error", "message": "Dataset not initialized. Load it before querying."}
 
-    t0 = time.time()
+    storage = ProvenanceStorageEngine()
+    t0 = time.perf_counter()
     try:
-        df = storage.query_sql(sql_query, parquet_path=parquet_path)
-        latency_ms = round((time.time() - t0) * 1000, 2)
+        storage.conn.execute("SET enable_external_access=false")
+        import pyarrow.parquet as pq
+
+        storage.conn.register("provenance", pq.read_table(str(parquet_path)))
+        statements = storage.conn.extract_statements(sql_query)
+        if len(statements) != 1 or str(statements[0].type).split(".")[-1] != "SELECT":
+            raise ValueError("Only one read-only SELECT statement is allowed")
+        df = storage.conn.execute(sql_query).fetchdf()
         return {
             "status": "success",
+            "dataset_id": dataset_id,
             "columns": list(df.columns),
-            "rows": df.to_dict(orient="records"),
+            "rows": json.loads(df.to_json(orient="records")),
             "row_count": len(df),
-            "latency_ms": latency_ms,
+            "latency_ms": round((time.perf_counter() - t0) * 1000, 3),
         }
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+    except Exception as exc:
+        return {"status": "error", "message": str(exc)}
+    finally:
+        storage.conn.close()
 
 
 def generate_hardware_telemetry(count: int = 5) -> Dict[str, Any]:
@@ -444,19 +521,21 @@ def main():
     parser = argparse.ArgumentParser(description="CLOUD-M7 Python Bridge API for Node.js Dashboard")
     parser.add_argument("--action", choices=["analyze", "sql", "hardware"], default="analyze")
     parser.add_argument("--dataset", default="synthetic")
+    parser.add_argument("--dataset-id", default="")
     parser.add_argument("--query", default="SELECT tier, event_type, COUNT(*) as count FROM provenance GROUP BY tier, event_type")
     parser.add_argument("--count", type=int, default=5)
     args = parser.parse_args()
 
-    if args.action == "analyze":
-        res = analyze_dataset(args.dataset)
-        print(json.dumps(res))
-    elif args.action == "sql":
-        res = execute_sql(args.query)
-        print(json.dumps(res))
-    elif args.action == "hardware":
-        res = generate_hardware_telemetry(args.count)
-        print(json.dumps(res))
+    try:
+        if args.action == "analyze":
+            res = analyze_dataset(args.dataset)
+        elif args.action == "sql":
+            res = execute_sql(args.query, args.dataset_id)
+        else:
+            res = generate_hardware_telemetry(args.count)
+    except (ValueError, OSError) as exc:
+        res = {"status": "error", "message": str(exc), "errors": getattr(exc, "errors", [str(exc)])}
+    print(json.dumps(res, allow_nan=False))
 
 
 if __name__ == "__main__":

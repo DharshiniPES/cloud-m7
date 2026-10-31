@@ -620,7 +620,7 @@ async function executeSql() {
     const res = await fetch('/api/sql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query })
+      body: JSON.stringify({ query, dataset_id: currentAnalysis?.dataset_id || '' })
     });
     const result = await res.json();
     if (result.status === 'error') {

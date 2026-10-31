@@ -8,10 +8,10 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js v18+](https://img.shields.io/badge/node.js-v18+-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests: 32/32 Passed](https://img.shields.io/badge/pytest-32%20passed%20(100%25)-brightgreen.svg)]()
+[![Tests: 53/53 Passed](https://img.shields.io/badge/pytest-53%20passed%20(100%25)-brightgreen.svg)]()
 [![Dashboard: Express + Vis.js 60FPS](https://img.shields.io/badge/dashboard-Node.js%2060FPS-blueviolet.svg)]()
 [![Tracks: 6 Advanced Systems Tracks](https://img.shields.io/badge/architecture-6%20Advanced%20Tracks-purple.svg)]()
-[![Datasets: DARPA + TON_IoT + IoT23](https://img.shields.io/badge/datasets-4%20Real%20Benchmarks-orange.svg)]()
+[![Datasets: DARPA + TON_IoT + IoT23 + Review2](https://img.shields.io/badge/datasets-Controlled%20Fixtures%20%2B%204%20Benchmarks-orange.svg)]()
 
 ---
 
@@ -160,9 +160,9 @@ node server.js
 
 ---
 
-### Method 3: Run the Automated Pytest Verification Suite (26/26 Tests)
+### Method 3: Run the Automated Pytest Verification Suite (53/53 Tests)
 
-Run all 26 unit and integration tests covering all adapters, novelties, hardware probes, and storage layers:
+Run all 53 unit, integration, advanced tracks, and Review-2 test suites covering all adapters, novelties, hardware probes, canonical schemas, and storage layers:
 
 ```powershell
 cd C:\Users\Dharshini\capstone
@@ -177,6 +177,12 @@ tests/test_adapters.py::test_darpa_tc_adapter PASSED
 tests/test_adapters.py::test_ton_iot_adapter PASSED
 tests/test_adapters.py::test_iot23_adapter PASSED
 tests/test_adapters.py::test_normalizer_factory_auto_detection PASSED
+tests/test_advanced_tracks.py::test_track1_ebpf_hpc_and_tpm PASSED
+tests/test_advanced_tracks.py::test_track2_entropy_pruning_and_gnn PASSED
+tests/test_advanced_tracks.py::test_track3_rl_containment_agent PASSED
+tests/test_advanced_tracks.py::test_track4_zk_provenance_verifier PASSED
+tests/test_advanced_tracks.py::test_track5_adversarial_shield PASSED
+tests/test_advanced_tracks.py::test_track6_stix_and_streaming PASSED
 tests/test_causal_bridge.py::test_causal_bridge_imputation PASSED
 tests/test_end_to_end.py::test_end_to_end_attack_reconstruction PASSED
 tests/test_fusion.py::test_cross_tier_network_correlation PASSED
@@ -194,11 +200,32 @@ tests/test_parquet_storage.py::test_duckdb_sql_querying PASSED
 tests/test_parquet_storage.py::test_compression_benchmark PASSED
 tests/test_placement.py::test_placement_feasibility_constraint PASSED
 tests/test_placement.py::test_optimal_placement_discovery PASSED
+tests/test_review2.py::test_fixture_json_csv_equivalence_and_manifest[normal] PASSED
+tests/test_review2.py::test_fixture_json_csv_equivalence_and_manifest[attack] PASSED
+tests/test_review2.py::test_fixture_json_csv_equivalence_and_manifest[repeated] PASSED
+tests/test_review2.py::test_shuffled_parent_resolution_and_three_sources PASSED
+tests/test_review2.py::test_network_requires_complete_five_tuple[src_port-1234] PASSED
+tests/test_review2.py::test_network_requires_complete_five_tuple[dst_port-999] PASSED
+tests/test_review2.py::test_network_requires_complete_five_tuple[protocol-UDP] PASSED
+tests/test_review2.py::test_network_requires_complete_five_tuple[src_ip-10.9.9.9] PASSED
+tests/test_review2.py::test_network_requires_complete_five_tuple[dst_ip-10.8.8.8] PASSED
+tests/test_review2.py::test_network_window_is_forward_and_bounded[0.5] PASSED
+tests/test_review2.py::test_network_window_is_forward_and_bounded[100.0] PASSED
+tests/test_review2.py::test_invalid_dependencies_and_disconnected_path PASSED
+tests/test_review2.py::test_native_validation_has_row_errors[<lambda>-Row 1.*timestamp] PASSED
+tests/test_review2.py::test_native_validation_has_row_errors[<lambda>-Row 1.*hash] PASSED
+tests/test_review2.py::test_native_validation_has_row_errors[<lambda>-Row 1.*missing parent] PASSED
+tests/test_review2.py::test_native_validation_has_row_errors[<lambda>-Duplicate UUID] PASSED
+tests/test_review2.py::test_native_validation_has_row_errors[<lambda>-payload must] PASSED
+tests/test_missing_and_unsupported_input PASSED
+tests/test_folding_is_expandable_and_preserves_all_reachability PASSED
+tests/test_sql_tracks_selection_and_survives_reload PASSED
+tests/test_analysis_evidence_and_model_labels PASSED
 tests/test_schema.py::test_event_initialization_and_hash PASSED
 tests/test_schema.py::test_serialization_and_deserialization PASSED
 tests/test_schema.py::test_network_tuple_extraction PASSED
 
-============================= 26 passed in 5.82s ==============================
+============================= 53 passed in 5.19s ==============================
 ```
 
 ---
